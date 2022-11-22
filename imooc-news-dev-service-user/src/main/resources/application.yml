@@ -1,0 +1,7 @@
+#server:
+#  port: 8003
+spring:
+  application:
+    name: service-user
+  profiles:
+    active: dev
