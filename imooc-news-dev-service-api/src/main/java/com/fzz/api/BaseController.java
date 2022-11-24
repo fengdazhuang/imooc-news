@@ -1,6 +1,6 @@
-package com.fzz.api.controller;
+package com.fzz.api;
 
-import com.fzz.common.utils.RedisOperator;
+import com.fzz.common.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,10 +20,8 @@ import java.util.Map;
 public class BaseController {
 
     @Autowired
-    public RedisOperator redis;
+    public RedisUtil redis;
 
-    @Autowired
-    private RestTemplate restTemplate;
 
     public static final String MOBILE_SMSCODE = "mobile:smscode";
     public static final String REDIS_USER_TOKEN = "redis_user_token";
@@ -89,8 +87,8 @@ public class BaseController {
                           Integer maxAge) {
         Cookie cookie = new Cookie(cookieName, cookieValue);
         cookie.setMaxAge(maxAge);
-//        cookie.setDomain("imoocnews.com");
-        cookie.setDomain(DOMAIN_NAME);
+        cookie.setDomain("imoocnews.com");
+//        cookie.setDomain(DOMAIN_NAME);
         cookie.setPath("/");
         response.addCookie(cookie);
     }

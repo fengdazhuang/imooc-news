@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class AppUser {
 
-    private String id;
+    private Long id;
 
     /**
      * 手机号
@@ -80,7 +80,7 @@ public class AppUser {
     /**
      * 更新时间 更新时间
      */
-    @TableField(fill=FieldFill.UPDATE)
+    @TableField(fill=FieldFill.INSERT_UPDATE)
     private Date updatedTime;
 
 

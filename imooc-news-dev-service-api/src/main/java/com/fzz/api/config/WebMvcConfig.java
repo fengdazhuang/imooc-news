@@ -1,8 +1,8 @@
 package com.fzz.api.config;
 
 
+import com.fzz.api.config.component.ObjectConverterMapper;
 import com.fzz.api.interceptor.PassportInterceptor;
-import com.fzz.common.config.ObjectConverterMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;

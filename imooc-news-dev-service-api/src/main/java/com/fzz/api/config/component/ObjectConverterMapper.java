@@ -1,4 +1,4 @@
-package com.fzz.common.config;
+package com.fzz.api.config.component;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
