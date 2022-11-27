@@ -1,4 +1,4 @@
-package com.fzz.user;
+package com.fzz.admin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,8 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.fzz")
-public class MainApplication {
+public class AdminApplication {
     public static void main(String[] args) {
-        SpringApplication.run(MainApplication.class,args);
+        SpringApplication.run(AdminApplication.class,args);
     }
 }

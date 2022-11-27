@@ -1,18 +1,13 @@
 package com.fzz.user.controller;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.fzz.api.BaseController;
 import com.fzz.api.controller.user.PassportControllerApi;
 import com.fzz.common.result.ResponseStatusEnum;
-import com.fzz.common.utils.IPUtil;
-import com.fzz.common.utils.RedisUtil;
-import com.fzz.common.utils.SMSUtil;
+import com.fzz.common.utils.*;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.utils.ValidateCodeUtils;
-import com.fzz.dto.LoginDto;
+import com.fzz.bo.AppUserLoginBo;
 import com.fzz.pojo.AppUser;
 import com.fzz.user.service.AppUserService;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -52,7 +47,7 @@ public class PassportController extends BaseController implements PassportContro
     }
 
     @Override
-    public Object doLogin(@RequestBody  @Valid LoginDto loginDto,
+    public Object doLogin(@RequestBody  @Valid AppUserLoginBo loginDto,
                           BindingResult bindingResult,
                           HttpServletRequest request,
                           HttpServletResponse response) {
@@ -94,7 +89,7 @@ public class PassportController extends BaseController implements PassportContro
         if(status!=2){
             String uToken = UUID.randomUUID().toString();
             redisUtil.set(REDIS_USER_TOKEN+":"+user.getId(),uToken);
-            redisUtil.set(REDIS_USER_INFO+":"+user.getId(), new Gson().toJson(user));
+            redisUtil.set(REDIS_USER_INFO+":"+user.getId(), JsonUtils.objectToJson(user));
 
             setCookie(request,response,"utoken",uToken,COOKIE_MONTH);
             setCookie(request,response,"uid",String.valueOf(user.getId()),COOKIE_MONTH);
@@ -105,6 +100,17 @@ public class PassportController extends BaseController implements PassportContro
         return GraceJSONResult.ok(status);
     }
 
+    @Override
+    public Object doLogout(Long userId,
+                           HttpServletRequest request,
+                           HttpServletResponse response) {
+
+        redisUtil.del(REDIS_USER_TOKEN+":"+userId);
+        setCookie(request,response,"uid","",0);
+        setCookie(request,response,"utoken","",0);
+        return GraceJSONResult.ok();
+
+    }
 
 
 }

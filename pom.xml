@@ -9,6 +9,9 @@
         <module>imooc-news-dev-model</module>
         <module>imooc-news-dev-service-api</module>
         <module>imooc-news-dev-service-user</module>
+        <module>imooc-news-dev-service-file</module>
+        <module>imooc-news-dev-service-article</module>
+        <module>imooc-news-dev-service-admin</module>
     </modules>
 
     <!--  统一springboot的版本，后续springboot系列不要加版本号

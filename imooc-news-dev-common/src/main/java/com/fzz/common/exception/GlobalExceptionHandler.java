@@ -2,19 +2,19 @@ package com.fzz.common.exception;
 
 
 import com.fzz.common.result.GraceJSONResult;
+import com.fzz.common.result.ResponseStatusEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 
 /**
  *
  */
 
-@ControllerAdvice(annotations = {RestController.class, Controller.class})
+@ControllerAdvice
 @ResponseBody
 @Slf4j
 public class GlobalExceptionHandler {
@@ -42,5 +42,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public GraceJSONResult exceptionHandler(CustomException exception){
         return GraceJSONResult.exception(exception.getResponseStatusEnum());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public GraceJSONResult returnMaxUploadSizeExceededException(MaxUploadSizeExceededException exception){
+        return GraceJSONResult.errorCustom(ResponseStatusEnum.FILE_MAX_SIZE_ERROR);
     }
 }

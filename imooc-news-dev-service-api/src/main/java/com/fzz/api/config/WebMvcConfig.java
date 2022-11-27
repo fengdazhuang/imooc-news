@@ -3,6 +3,8 @@ package com.fzz.api.config;
 
 import com.fzz.api.config.component.ObjectConverterMapper;
 import com.fzz.api.interceptor.PassportInterceptor;
+import com.fzz.api.interceptor.UserStatusInterceptor;
+import com.fzz.api.interceptor.UserTokenInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -20,11 +22,31 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new PassportInterceptor();
     }
 
+    @Bean
+    public UserStatusInterceptor userStatusInterceptor(){
+        return new UserStatusInterceptor();
+    }
+
+    @Bean
+    public UserTokenInterceptor userTokenInterceptor(){
+        return new UserTokenInterceptor();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(passportInterceptor())
                 .addPathPatterns("/passport/getSMSCode");
+
+        registry.addInterceptor(userTokenInterceptor())
+                .addPathPatterns("/user/getAccountInfo")
+                .addPathPatterns("/user/updateUserInfo")
+                .addPathPatterns("/fs/uploadFace");
+
+//        registry.addInterceptor(userStatusInterceptor())
+//                .addPathPatterns("/writer/*")
+//                .addPathPatterns("/user/updateUserInfo");
     }
+
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {

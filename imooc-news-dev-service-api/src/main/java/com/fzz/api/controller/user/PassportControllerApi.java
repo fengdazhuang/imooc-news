@@ -1,6 +1,6 @@
 package com.fzz.api.controller.user;
 
-import com.fzz.dto.LoginDto;
+import com.fzz.bo.AppUserLoginBo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.BindingResult;
@@ -21,8 +21,14 @@ public interface PassportControllerApi {
 
     @ApiOperation(value = "PassportControllerApi的接口", notes = "登录注册", httpMethod = "POST")
     @PostMapping("/doLogin")
-    public Object doLogin(@RequestBody @Valid LoginDto loginDto,
+    public Object doLogin(@RequestBody @Valid AppUserLoginBo loginDto,
                           BindingResult bindingResult,
                           HttpServletRequest request,
                           HttpServletResponse response);
+
+    @ApiOperation(value = "PassportControllerApi的接口",notes ="登出" )
+    @PostMapping("/logout")
+    public Object doLogout(@RequestParam Long userId,
+                           HttpServletRequest request,
+                           HttpServletResponse response);
 }

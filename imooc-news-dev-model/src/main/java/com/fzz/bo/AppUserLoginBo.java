@@ -1,11 +1,11 @@
-package com.fzz.dto;
+package com.fzz.bo;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
 @Data
-public class LoginDto {
+public class AppUserLoginBo {
 
     @NotBlank(message = "手机号不能为空")
     private String mobile;

@@ -2,11 +2,22 @@ package com.fzz.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fzz.api.BaseController;
+import com.fzz.bo.UpdateUserInfoBo;
+import com.fzz.common.exception.CustomException;
+import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.utils.JsonUtils;
+import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AppUser;
 import com.fzz.user.mapper.AppUserMapper;
 import com.fzz.user.service.AppUserService;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import static com.fzz.api.BaseController.REDIS_USER_INFO;
 
 @Service
 public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> implements AppUserService {
@@ -15,6 +26,9 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
 
     @Autowired
     private AppUserMapper appUserMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public AppUser userIsExists(String mobile) {
@@ -36,6 +50,42 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
 
     @Override
     public AppUser queryUserById(Long userId) {
-        return this.getById(userId);
+         String userStr = redisUtil.get(REDIS_USER_INFO + ":" + userId);
+         if(StringUtils.isNotBlank(userStr)){
+             return JsonUtils.jsonToPojo(userStr,AppUser.class);
+         }
+         AppUser appUser = this.getById(userId);
+         redisUtil.set(REDIS_USER_INFO+":"+appUser.getId(), JsonUtils.objectToJson(appUser));
+         return appUser;
+    }
+
+    @Override
+    public void updateUserById(UpdateUserInfoBo updateUserInfoBo) {
+        redisUtil.del(REDIS_USER_INFO+":"+updateUserInfoBo.getId());
+        AppUser user = new AppUser();
+        BeanUtils.copyProperties(updateUserInfoBo,user);
+        user.setActiveStatus(1);
+        boolean status = this.updateById(user);
+        if(!status){
+            throw new CustomException(ResponseStatusEnum.USER_UPDATE_ERROR);
+        }
+        user=this.getById(user.getId());
+
+        redisUtil.set(REDIS_USER_INFO+":"+user.getId(), JsonUtils.objectToJson(user));
+        //延迟双删
+        try {
+            Thread.sleep(500);
+            redisUtil.del(REDIS_USER_INFO+":"+user.getId());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public AppUser uploadFace(Long userId, MultipartFile multipartFile) {
+        AppUser appUser = queryUserById(userId);
+        appUser.setFace(multipartFile.toString());
+        return appUser;
     }
 }
