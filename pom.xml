@@ -45,6 +45,7 @@
 
         <springfox-swagger2.version>2.4.0</springfox-swagger2.version>
         <swagger-bootstrap-ui.version>1.6</swagger-bootstrap-ui.version>
+
         <fastdfs.version>1.27.2</fastdfs.version>
 
         <slf4j.version>1.7.21</slf4j.version>
@@ -74,13 +75,13 @@
                 <version>${lombok.version}</version>
             </dependency>
 
-            <!-- 引入 mongodb 依赖 -->
+            <!-- 引入 mongodb 依赖
             <dependency>
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongodb-driver</artifactId>
-                <!--mongodb-driver.version-->
+                &lt;!&ndash;mongodb-driver.version&ndash;&gt;
                 <version>3.11.1</version>
-            </dependency>
+            </dependency>-->
 
             <!-- mysql 驱动 -->
             <dependency>

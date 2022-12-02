@@ -27,6 +27,8 @@ public class BaseController {
     public static final String REDIS_USER_INFO = "redis_user_info";
     public static final String REDIS_ADMIN_TOKEN = "redis_admin_token";
 
+    public static final String REDIS_FRIEND_LINKS="redis_friend_links";
+
     public static final String REDIS_ALL_CATEGORY = "redis_all_category";
 
     public static final String REDIS_WRITER_FANS_COUNTS = "redis_writer_fans_counts";

@@ -4,6 +4,10 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * 普通用户登录传入后台的对象
+ */
+
 @Data
 public class AppUserLoginBo {
 

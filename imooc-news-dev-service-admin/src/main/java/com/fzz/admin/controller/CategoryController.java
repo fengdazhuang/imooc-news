@@ -1,0 +1,51 @@
+package com.fzz.admin.controller;
+
+import com.fzz.admin.service.CategoryService;
+import com.fzz.api.BaseController;
+import com.fzz.api.controller.admin.CategoryControllerApi;
+import com.fzz.common.result.GraceJSONResult;
+import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.pojo.Category;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+public class CategoryController extends BaseController implements CategoryControllerApi {
+
+    @Autowired
+    private CategoryService categoryService;
+
+    @Override
+    public GraceJSONResult getCatList() {
+        List<Category> list = categoryService.list();
+        return GraceJSONResult.ok(list);
+    }
+
+    @Override
+    public GraceJSONResult saveOrUpdateCategory(Category category) {
+        String name = category.getName();
+        Integer id = category.getId();
+        if(StringUtils.isBlank(name)){
+            return GraceJSONResult.errorCustom(ResponseStatusEnum.CATEGORY_NAME_NULL_ERROR);
+        }
+        if(id==null){
+            Category cat=categoryService.queryCategoryByName(name);
+            if(cat!=null){
+                return GraceJSONResult.errorCustom(ResponseStatusEnum.CATEGORY_EXIST_ERROR);
+            }
+            categoryService.save(category);
+        }else{
+            categoryService.updateById(category);
+        }
+        return GraceJSONResult.ok();
+    }
+
+    @Override
+    public GraceJSONResult getCats() {
+        List<Category> list = categoryService.list();
+        return GraceJSONResult.ok(list);
+    }
+}

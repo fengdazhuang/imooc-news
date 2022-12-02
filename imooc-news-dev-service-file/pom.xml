@@ -17,6 +17,13 @@
     </properties>
 
     <dependencies>
+        <!-- 引入 mongodb 依赖 -->
+        <!--<dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver</artifactId>
+            &lt;!&ndash;mongodb-driver.version&ndash;&gt;
+        </dependency>
+-->
         <dependency>
             <groupId>com.fzz</groupId>
             <artifactId>imooc-news-dev-service-api</artifactId>

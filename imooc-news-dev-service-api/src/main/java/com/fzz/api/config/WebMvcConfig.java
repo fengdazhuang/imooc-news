@@ -2,6 +2,7 @@ package com.fzz.api.config;
 
 
 import com.fzz.api.config.component.ObjectConverterMapper;
+import com.fzz.api.interceptor.AdminTokenInterceptor;
 import com.fzz.api.interceptor.PassportInterceptor;
 import com.fzz.api.interceptor.UserStatusInterceptor;
 import com.fzz.api.interceptor.UserTokenInterceptor;
@@ -32,6 +33,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new UserTokenInterceptor();
     }
 
+    @Bean
+    public AdminTokenInterceptor adminTokenInterceptor(){
+        return new AdminTokenInterceptor();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(passportInterceptor())
@@ -45,6 +51,17 @@ public class WebMvcConfig implements WebMvcConfigurer {
 //        registry.addInterceptor(userStatusInterceptor())
 //                .addPathPatterns("/writer/*")
 //                .addPathPatterns("/user/updateUserInfo");
+
+        registry.addInterceptor(adminTokenInterceptor())
+                .addPathPatterns("/adminMng/addNewAdmin")
+                .addPathPatterns("/adminMng/getAdminList")
+                .addPathPatterns("/adminMng/adminIsExist")
+                .addPathPatterns("/appUser/queryAll")
+                .addPathPatterns("/appUser/userDetail")
+                .addPathPatterns("/appUser/freezeUserOrNot");
+
+
+
     }
 
 

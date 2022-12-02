@@ -1,5 +1,7 @@
 package com.fzz.pojo;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.Date;
@@ -32,11 +34,13 @@ public class AdminUser {
     /**
      * 创建时间 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private Date createdTime;
 
     /**
      * 更新时间 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updatedTime;
 
 

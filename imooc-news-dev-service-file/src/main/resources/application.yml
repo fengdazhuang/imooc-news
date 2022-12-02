@@ -12,7 +12,11 @@ spring:
       max-file-size: 512000
       max-request-size: 512000
 
+  data:
+    mongodb:
+      uri: mongodb://root:root@43.142.253.194:27017/imooc-news?authSource=admin
+
 fdfs:
   connect-timeout: 30
-  tracker-list: 192.168.91.129:22122
+  tracker-list: 192.168.91.132:22122
   so-timeout: 30

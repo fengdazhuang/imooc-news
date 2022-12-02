@@ -5,6 +5,10 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+/**
+ * 查询用户列表时的对象
+ */
+
 @Data
 public class QueryUserBo {
 

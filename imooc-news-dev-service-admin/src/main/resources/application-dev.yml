@@ -8,6 +8,9 @@ spring:
     host: localhost
     password:
     timeout: 5000
+  data:
+    mongodb:
+      uri: mongodb://root:root@43.142.253.194:27017/imooc-news?authSource=admin
 
 mybatis-plus:
   configuration:

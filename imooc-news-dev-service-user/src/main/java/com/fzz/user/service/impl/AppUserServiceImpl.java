@@ -25,9 +25,6 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     private static final String face="C:\\Users\\冯大壮\\Pictures\\Saved Pictures\\abd.jpeg";
 
     @Autowired
-    private AppUserMapper appUserMapper;
-
-    @Autowired
     private RedisUtil redisUtil;
 
     @Override
@@ -55,7 +52,10 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
              return JsonUtils.jsonToPojo(userStr,AppUser.class);
          }
          AppUser appUser = this.getById(userId);
-         redisUtil.set(REDIS_USER_INFO+":"+appUser.getId(), JsonUtils.objectToJson(appUser));
+         if(appUser!=null){
+             redisUtil.set(REDIS_USER_INFO+":"+appUser.getId(), JsonUtils.objectToJson(appUser));
+         }
+
          return appUser;
     }
 
@@ -83,9 +83,4 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     }
 
 
-    public AppUser uploadFace(Long userId, MultipartFile multipartFile) {
-        AppUser appUser = queryUserById(userId);
-        appUser.setFace(multipartFile.toString());
-        return appUser;
-    }
 }

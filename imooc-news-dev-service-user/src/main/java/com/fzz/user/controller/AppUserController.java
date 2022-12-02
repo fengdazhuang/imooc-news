@@ -50,6 +50,8 @@ public class AppUserController extends BaseController implements AppUserControll
 
         List<AppUser> records=userPage.getRecords();
 
+
+
         List<QueryUserVo> list=records.stream().map(((item)->{
             QueryUserVo queryUserVo=new QueryUserVo();
             BeanUtils.copyProperties(item,queryUserVo);
@@ -62,16 +64,11 @@ public class AppUserController extends BaseController implements AppUserControll
 
     @Override
     public Object getUserDetail(Long userId) {
-        String userStr=redisUtil.get(REDIS_USER_INFO+":"+userId);
-        if(StringUtils.isNotBlank(userStr)){
-            return GraceJSONResult.ok(JsonUtils.jsonToPojo(userStr,AppUser.class));
-        }
-        AppUser user=appUserService.getById(userId);
+        AppUser user=appUserService.queryUserById(userId);
 
         if(user!=null){
             UserInfoByAdminVo userInfoByAdminVo=new UserInfoByAdminVo();
             BeanUtils.copyProperties(user,userInfoByAdminVo);
-
             return GraceJSONResult.ok(userInfoByAdminVo);
 
         }else{
@@ -81,13 +78,14 @@ public class AppUserController extends BaseController implements AppUserControll
 
     @Override
     public Object freezeUserOrNot(Long userId, Integer doStatus) {
-        redisUtil.del(REDIS_USER_INFO+":"+userId);
-        AppUser user=appUserService.getById(userId);
+
+        AppUser user=appUserService.queryUserById(userId);
         if(user!=null){
             LambdaUpdateWrapper<AppUser> updateWrapper=new LambdaUpdateWrapper<>();
             updateWrapper.set(AppUser::getActiveStatus,doStatus);
             updateWrapper.eq(AppUser::getId,userId);
             appUserService.update(updateWrapper);
+            redisUtil.del(REDIS_USER_INFO+":"+userId);
             return GraceJSONResult.ok();
         }else{
             return GraceJSONResult.errorCustom(ResponseStatusEnum.USER_NOT_EXIST_ERROR);

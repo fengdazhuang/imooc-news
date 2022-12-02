@@ -51,6 +51,10 @@ public enum ResponseStatusEnum {
     ADMIN_FACE_NULL_ERROR(568, false, "人脸信息不能为空！"),
     ADMIN_FACE_LOGIN_ERROR(569, false, "人脸识别失败，请重试！"),
     CATEGORY_EXIST_ERROR(570, false, "文章分类已存在，请换一个分类名！"),
+    ADMIN_FACE_NOT_EXIST(571,false,"人脸信息不存在，请使用密码登录"),
+
+
+    CATEGORY_NAME_NULL_ERROR(572,false,"分类名称不能为空"),
 
     // 媒体中心 相关错误 58x
     ARTICLE_COVER_NOT_EXIST_ERROR(580, false, "文章封面不存在，请选择一个！"),

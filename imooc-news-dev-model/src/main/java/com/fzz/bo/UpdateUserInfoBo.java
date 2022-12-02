@@ -7,6 +7,10 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.*;
 import java.util.Date;
 
+/**
+ * 用户自己修改信息传入后台的对象
+ */
+
 @Data
 public class UpdateUserInfoBo {
 
