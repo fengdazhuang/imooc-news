@@ -1,6 +1,7 @@
 package com.fzz.api.controller.user;
 
-import com.fzz.bo.AppUserLoginBo;
+import com.fzz.bo.AppUserLoginBO;
+import com.fzz.common.result.GraceJSONResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.BindingResult;
@@ -10,25 +11,25 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-@Api(value = "这是PassportControllerApi",tags = "通行controller")
+@Api(value = "用户通行",tags = "通行controller")
 @RequestMapping("/passport")
 public interface PassportControllerApi {
 
-    @ApiOperation(value = "PassportControllerApi的接口", notes = "发送验证码", httpMethod = "GET")
+    @ApiOperation(value = "发送验证码", notes = "发送验证码", httpMethod = "GET")
     @GetMapping("/getSMSCode")
-    public Object sendMessage(@RequestParam("mobile") String phone, HttpServletRequest request);
+    public GraceJSONResult sendMessage(@RequestParam("mobile") String phone, HttpServletRequest request);
 
 
-    @ApiOperation(value = "PassportControllerApi的接口", notes = "登录注册", httpMethod = "POST")
+    @ApiOperation(value = "用户登录注册", notes = "用户登录注册", httpMethod = "POST")
     @PostMapping("/doLogin")
-    public Object doLogin(@RequestBody @Valid AppUserLoginBo loginDto,
+    public GraceJSONResult doLogin(@RequestBody @Valid AppUserLoginBO loginDto,
                           BindingResult bindingResult,
                           HttpServletRequest request,
                           HttpServletResponse response);
 
-    @ApiOperation(value = "PassportControllerApi的接口",notes ="登出" )
+    @ApiOperation(value = "用户登出",notes ="用户登出" )
     @PostMapping("/logout")
-    public Object doLogout(@RequestParam Long userId,
+    public GraceJSONResult doLogout(@RequestParam Long userId,
                            HttpServletRequest request,
                            HttpServletResponse response);
 }

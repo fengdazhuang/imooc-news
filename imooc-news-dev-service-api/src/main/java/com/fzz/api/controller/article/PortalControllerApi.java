@@ -10,11 +10,14 @@ public interface PortalControllerApi {
 
     ///portal/article/list?keyword=&category=&page=1&pageSize=15
     @GetMapping("/article/list")
-    public GraceJSONResult list(@RequestParam String keyword,
-                                @RequestParam String category,
+    public GraceJSONResult listArticlesToUser(@RequestParam String keyword,
+                                @RequestParam Integer category,
                                 @RequestParam Integer page,
                                 @RequestParam Integer pageSize);
 
     @GetMapping("/article/hotList")
     public GraceJSONResult hotList();
+
+    @GetMapping("/article/detail")
+    public GraceJSONResult showArticleDetail(@RequestParam Long articleId);
 }

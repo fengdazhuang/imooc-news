@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class QueryUserVo {
+public class QueryUserVO {
 
     private Long id;
 

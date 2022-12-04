@@ -1,14 +1,15 @@
-package com.fzz.pojo;
+package com.fzz.vo;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 向用户展现的文章对象
+ */
 @Data
-public class Article {
+public class ShowArticleVO {
     private Long id;
 
     private String title;
@@ -28,10 +29,6 @@ public class Article {
      */
     private String articleCover;
 
-    /**
-     * 是否是预约定时发布的文章，1：预约（定时）发布，0：即时发布    在预约时间到点的时候，把1改为0，则发布
-     */
-    private Integer isAppoint;
 
     /**
      * 文章状态，1：审核中（用户已提交），2：机审结束，等待人工审核，3：审核通过（已发布），4：审核未通过；5：文章撤回（已发布的情况下才能撤回和删除）
@@ -41,7 +38,7 @@ public class Article {
     /**
      * 发布者用户id
      */
-    private Long publishUserId;
+    private String publishUserId;
 
     /**
      * 文章发布时间（也是预约发布的时间）
@@ -66,20 +63,12 @@ public class Article {
     @TableLogic
     private Integer isDelete;
 
-    /**
-     * 文章的创建时间
-     */
-    @TableField(fill = FieldFill.INSERT,value = "create_time")
-    private Date createdTime;
-
-    /**
-     * 文章的修改时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE,value = "update_time")
-    private Date updatedTime;
 
     /**
      * 文章内容，长度不超过9999，需要在前后端判断
      */
     private String content;
+
+    private PublisherVO publisherVO;
+
 }

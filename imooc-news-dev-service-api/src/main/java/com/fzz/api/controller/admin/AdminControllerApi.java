@@ -1,7 +1,7 @@
 package com.fzz.api.controller.admin;
 
-import com.fzz.bo.AddNewAdminBo;
-import com.fzz.bo.AdminUserLoginBo;
+import com.fzz.bo.AddNewAdminBO;
+import com.fzz.bo.AdminUserLoginBO;
 import com.fzz.common.result.GraceJSONResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,7 @@ import javax.validation.Valid;
 public interface AdminControllerApi {
     //adminMng/adminLogin
     @PostMapping("/adminLogin")
-    public GraceJSONResult adminLogin(@RequestBody @Valid AdminUserLoginBo adminUserLoginBo,
+    public GraceJSONResult adminLogin(@RequestBody @Valid AdminUserLoginBO adminUserLoginBo,
                                       BindingResult bindingResult,
                                       HttpServletRequest request,
                                       HttpServletResponse response);
@@ -34,10 +34,10 @@ public interface AdminControllerApi {
     public GraceJSONResult adminIsExist(@RequestParam String username);
 
     @PostMapping("/addNewAdmin")
-    public GraceJSONResult addNewAdmin(@RequestBody AddNewAdminBo addNewAdminBo);
+    public GraceJSONResult addNewAdmin(@RequestBody AddNewAdminBO addNewAdminBo);
 
     @PostMapping("/adminFaceLogin")
-    public GraceJSONResult adminFaceLogin(@RequestBody AdminUserLoginBo adminUserLoginBo,
+    public GraceJSONResult adminFaceLogin(@RequestBody AdminUserLoginBO adminUserLoginBo,
                                           HttpServletRequest request,
                                           HttpServletResponse response);
 

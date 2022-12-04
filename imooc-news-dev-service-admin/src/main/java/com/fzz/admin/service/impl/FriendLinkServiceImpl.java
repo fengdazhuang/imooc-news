@@ -2,10 +2,12 @@ package com.fzz.admin.service.impl;
 
 import com.fzz.admin.reporsitory.FriendLinkReporsitory;
 import com.fzz.admin.service.FriendLinkService;
-import com.fzz.mo.FriendLinkMo;
+import com.fzz.mo.FriendLinkMO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -16,14 +18,15 @@ public class FriendLinkServiceImpl implements FriendLinkService {
     private FriendLinkReporsitory friendLinkReporsitory;
 
     @Override
-    public List<FriendLinkMo> getFriendLinkList() {
-        List<FriendLinkMo> list = friendLinkReporsitory.findAll();
+    public List<FriendLinkMO> getFriendLinkList() {
+        List<FriendLinkMO> list = friendLinkReporsitory.findAll();
         return list;
     }
 
     @Override
-    public void saveOrUpdateFriendLink(FriendLinkMo friendLink) {
-        if(friendLink.getId()==null){
+    public void saveOrUpdateFriendLink(FriendLinkMO friendLink) {
+        if(StringUtils.isBlank(friendLink.getId())){
+            friendLink.setUpdateTime(new Date());
             friendLinkReporsitory.save(friendLink);
         }/*else{
             friendLinkReporsitory.

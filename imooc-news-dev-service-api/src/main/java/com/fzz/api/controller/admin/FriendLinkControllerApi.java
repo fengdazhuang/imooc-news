@@ -1,7 +1,7 @@
 package com.fzz.api.controller.admin;
 
 
-import com.fzz.bo.AddFriendLinkBo;
+import com.fzz.bo.AddFriendLinkBO;
 import com.fzz.common.result.GraceJSONResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,7 @@ public interface FriendLinkControllerApi {
     public GraceJSONResult getFriendLinkList();
 
     @PostMapping("/saveOrUpdateFriendLink")
-    public GraceJSONResult saveOrUpdateFriendLink(@RequestBody @Valid AddFriendLinkBo addFriendLinkBo, BindingResult result);
+    public GraceJSONResult saveOrUpdateFriendLink(@RequestBody @Valid AddFriendLinkBO addFriendLinkBo, BindingResult result);
 
     @PostMapping("/delete")
     public GraceJSONResult deleteFriendLink(@RequestParam String linkId);

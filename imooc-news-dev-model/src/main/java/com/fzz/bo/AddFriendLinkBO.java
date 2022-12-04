@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  */
 
 @Data
-public class AddFriendLinkBo {
+public class AddFriendLinkBO {
 
     private String id;
 

@@ -3,9 +3,9 @@ package com.fzz.admin.controller;
 import com.fzz.admin.service.FriendLinkService;
 import com.fzz.api.BaseController;
 import com.fzz.api.controller.admin.FriendLinkControllerApi;
-import com.fzz.bo.AddFriendLinkBo;
+import com.fzz.bo.AddFriendLinkBO;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.mo.FriendLinkMo;
+import com.fzz.mo.FriendLinkMO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -23,19 +23,18 @@ public class FriendLinkController extends BaseController implements FriendLinkCo
 
     @Override
     public GraceJSONResult getFriendLinkList() {
-        List<FriendLinkMo> list = friendLinkService.getFriendLinkList();
+        List<FriendLinkMO> list = friendLinkService.getFriendLinkList();
         return GraceJSONResult.ok(list);
     }
 
     @Override
-    public GraceJSONResult saveOrUpdateFriendLink(AddFriendLinkBo addFriendLinkBo, BindingResult result) {
+    public GraceJSONResult saveOrUpdateFriendLink(AddFriendLinkBO addFriendLinkBo, BindingResult result) {
         if(result.hasErrors()){
             Map<String, String> errors = getErrors(result);
             return GraceJSONResult.errorMap(errors);
         }
-        FriendLinkMo friendLink=new FriendLinkMo();
+        FriendLinkMO friendLink=new FriendLinkMO();
         BeanUtils.copyProperties(addFriendLinkBo,friendLink);
-        friendLink.setUpdateTime(new Date());
 
         friendLinkService.saveOrUpdateFriendLink(friendLink);
         return GraceJSONResult.ok();
@@ -49,7 +48,7 @@ public class FriendLinkController extends BaseController implements FriendLinkCo
 
     @Override
     public GraceJSONResult list() {
-        List<FriendLinkMo> list = friendLinkService.getFriendLinkList();
+        List<FriendLinkMO> list = friendLinkService.getFriendLinkList();
         return GraceJSONResult.ok(list);
     }
 }

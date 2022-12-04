@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @Document("FriendLink")
-public class FriendLinkMo {
+public class FriendLinkMO {
 
     @Id
     private String id;

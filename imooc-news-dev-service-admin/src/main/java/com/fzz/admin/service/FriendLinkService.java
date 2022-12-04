@@ -1,14 +1,14 @@
 package com.fzz.admin.service;
 
 
-import com.fzz.mo.FriendLinkMo;
+import com.fzz.mo.FriendLinkMO;
 
 import java.util.List;
 
 public interface FriendLinkService  {
-    List<FriendLinkMo> getFriendLinkList();
+    List<FriendLinkMO> getFriendLinkList();
 
-    void saveOrUpdateFriendLink(FriendLinkMo friendLink);
+    void saveOrUpdateFriendLink(FriendLinkMO friendLink);
 
     void deleteFriendLink(String linkId);
 }

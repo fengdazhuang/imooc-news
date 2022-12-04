@@ -5,7 +5,7 @@ import com.fzz.api.controller.user.PassportControllerApi;
 import com.fzz.common.result.ResponseStatusEnum;
 import com.fzz.common.utils.*;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.bo.AppUserLoginBo;
+import com.fzz.bo.AppUserLoginBO;
 import com.fzz.pojo.AppUser;
 import com.fzz.user.service.AppUserService;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ public class PassportController extends BaseController implements PassportContro
     @Autowired
     private RedisUtil redisUtil;
 
-    public Object sendMessage(@RequestParam("mobile") String phone, HttpServletRequest httpServletRequest) {
+    public GraceJSONResult sendMessage(@RequestParam("mobile") String phone, HttpServletRequest httpServletRequest) {
         String code = ValidateCodeUtils.generateValidateCode(4).toString();
         System.out.println(code);
         String ip = IPUtil.getRequestIp(httpServletRequest);
@@ -47,7 +47,7 @@ public class PassportController extends BaseController implements PassportContro
     }
 
     @Override
-    public Object doLogin(@RequestBody  @Valid AppUserLoginBo loginDto,
+    public GraceJSONResult doLogin(@RequestBody  @Valid AppUserLoginBO loginDto,
                           BindingResult bindingResult,
                           HttpServletRequest request,
                           HttpServletResponse response) {
@@ -101,7 +101,7 @@ public class PassportController extends BaseController implements PassportContro
     }
 
     @Override
-    public Object doLogout(Long userId,
+    public GraceJSONResult doLogout(Long userId,
                            HttpServletRequest request,
                            HttpServletResponse response) {
 

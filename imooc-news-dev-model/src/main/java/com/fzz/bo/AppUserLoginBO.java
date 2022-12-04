@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
  */
 
 @Data
-public class AppUserLoginBo {
+public class AppUserLoginBO {
 
     @NotBlank(message = "手机号不能为空")
     private String mobile;

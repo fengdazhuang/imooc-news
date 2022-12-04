@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fzz.admin.mapper.AdminMapper;
 import com.fzz.admin.service.AdminService;
-import com.fzz.bo.AddNewAdminBo;
+import com.fzz.bo.AddNewAdminBO;
 import com.fzz.pojo.AdminUser;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -23,7 +23,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, AdminUser> implem
     }
 
     @Override
-    public boolean addNewAdmin(AddNewAdminBo addNewAdminBo) {
+    public boolean addNewAdmin(AddNewAdminBO addNewAdminBo) {
         String password = addNewAdminBo.getPassword();
         String confirmPassword = addNewAdminBo.getConfirmPassword();
         if(StringUtils.isBlank(password)||StringUtils.isBlank(confirmPassword)){

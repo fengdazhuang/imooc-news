@@ -2,8 +2,7 @@ package com.fzz.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fzz.api.BaseController;
-import com.fzz.bo.UpdateUserInfoBo;
+import com.fzz.bo.UpdateUserInfoBO;
 import com.fzz.common.exception.CustomException;
 import com.fzz.common.result.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
@@ -15,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import static com.fzz.api.BaseController.REDIS_USER_INFO;
 
@@ -60,7 +58,7 @@ public class AppUserServiceImpl extends ServiceImpl<AppUserMapper, AppUser> impl
     }
 
     @Override
-    public void updateUserById(UpdateUserInfoBo updateUserInfoBo) {
+    public void updateUserById(UpdateUserInfoBO updateUserInfoBo) {
         redisUtil.del(REDIS_USER_INFO+":"+updateUserInfoBo.getId());
         AppUser user = new AppUser();
         BeanUtils.copyProperties(updateUserInfoBo,user);

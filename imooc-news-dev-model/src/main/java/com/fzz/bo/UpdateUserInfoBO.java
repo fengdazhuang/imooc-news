@@ -12,7 +12,7 @@ import java.util.Date;
  */
 
 @Data
-public class UpdateUserInfoBo {
+public class UpdateUserInfoBO {
 
     @NotNull(message = "用户id不能为空")
     private Long id;

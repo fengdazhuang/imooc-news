@@ -2,7 +2,7 @@ package com.fzz.file.controller;
 
 import com.fzz.api.BaseController;
 import com.fzz.api.controller.file.FileUploadControllerApi;
-import com.fzz.bo.AddNewAdminBo;
+import com.fzz.bo.AddNewAdminBO;
 import com.fzz.common.exception.CustomException;
 import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.result.ResponseStatusEnum;
@@ -24,7 +24,8 @@ import sun.misc.BASE64Decoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -67,7 +68,33 @@ public class FileUploadController extends BaseController implements FileUploadCo
     }
 
     @Override
-    public GraceJSONResult uploadToGridFS(AddNewAdminBo addNewAdminBo) throws IOException {
+    public GraceJSONResult uploadSomeFiles(Long userId, MultipartFile[] files) throws Exception {
+        List<String> filePathList=new ArrayList<>();
+        if(files!=null&&files.length>0){
+            for(MultipartFile file:files){
+                if(file!=null){
+                    String fileName=file.getOriginalFilename();
+                    if(StringUtils.isNotBlank(fileName)){
+                        String fileSplit[]=fileName.split("\\.");
+                        String suffix=fileSplit[fileSplit.length-1];
+                        if(!suffix.equalsIgnoreCase("png")&&!suffix.equalsIgnoreCase("jpg")
+                                &&!suffix.equalsIgnoreCase("jpeg")){
+                            continue;
+                        }
+                        String filePath=fileUploadService.uploadFdfs(file,suffix);
+                        if(StringUtils.isNotBlank(filePath)){
+                            filePathList.add(fileResource.getHost()+filePath);
+                        }
+                    }
+                }
+            }
+            return GraceJSONResult.ok(filePathList);
+        }
+        return GraceJSONResult.errorCustom(ResponseStatusEnum.FILE_UPLOAD_NULL_ERROR);
+    }
+
+    @Override
+    public GraceJSONResult uploadToGridFS(AddNewAdminBO addNewAdminBo) throws IOException {
         String img64 = addNewAdminBo.getImg64();
         byte[] bytes = new BASE64Decoder().decodeBuffer(img64.trim());
         ByteArrayInputStream arrayInputStream=new ByteArrayInputStream(bytes);

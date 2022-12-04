@@ -7,7 +7,7 @@ import lombok.Data;
  */
 
 @Data
-public class AddNewAdminBo {
+public class AddNewAdminBO {
 
     /**
      * 用户名

@@ -7,6 +7,8 @@ import com.fzz.admin.service.CategoryService;
 import com.fzz.pojo.Category;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
     @Override
@@ -15,5 +17,10 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         queryWrapper.eq(Category::getName,name);
         Category category = this.getOne(queryWrapper);
         return category;
+    }
+
+    @Override
+    public List<Category> listCategory() {
+        return this.list();
     }
 }

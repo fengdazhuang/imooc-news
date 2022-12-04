@@ -10,22 +10,22 @@ import java.util.Date;
 @Data
 public class Comments {
     @TableId
-    private String id;
+    private Long id;
 
     /**
      * 评论的文章是哪个作者的关联id
      */
-    private String writerId;
+    private Long writerId;
 
     /**
      * 如果是回复留言，则本条为子留言，需要关联查询
      */
-    private String fatherId;
+    private Long fatherId;
 
     /**
      * 回复的那个文章id
      */
-    private String articleId;
+    private Long articleId;
 
     /**
      * 冗余文章标题，宽表处理，非规范化的sql思维，对于几百万文章和几百万评论的关联查询来讲，性能肯定不行，所以做宽表处理，从业务角度来说，文章发布以后不能随便修改标题和封面的
@@ -40,7 +40,7 @@ public class Comments {
     /**
      * 发布留言的用户id
      */
-    private String commentUserId;
+    private Long commentUserId;
 
     /**
      * 冗余用户昵称，非一致性字段，用户修改昵称后可以不用同步
@@ -60,7 +60,6 @@ public class Comments {
     /**
      * 留言时间
      */
-    @TableField(fill=FieldFill.INSERT)
     private Date createTime;
 
 

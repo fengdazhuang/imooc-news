@@ -65,6 +65,10 @@ public enum ResponseStatusEnum {
     ARTICLE_WITHDRAW_ERROR(585, false, "文章撤回失败！"),
     ARTICLE_REVIEW_ERROR(585, false, "文章审核出错！"),
     ARTICLE_ALREADY_READ_ERROR(586, false, "文章重复阅读！"),
+    ARTICLE_NOT_EXIST_ERROR(587,false,"文章不存在"),
+    COMMENT_CREATE_ERROR(588,false,"评论发表失败"),
+    COMMENT_DELETE_ERROR (589,false,"评论删除失败") ,
+
 
     // 人脸识别错误代码
     FACE_VERIFY_TYPE_ERROR(600, false, "人脸比对验证类型不正确！"),
@@ -74,6 +78,7 @@ public enum ResponseStatusEnum {
     SYSTEM_ERROR(555, false, "系统繁忙，请稍后再试！"),
     SYSTEM_OPERATION_ERROR(556, false, "操作失败，请重试或联系管理员"),
     SYSTEM_RESPONSE_NO_INFO(557, false, "");
+
 
 
     // 响应业务状态

@@ -4,14 +4,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.admin.service.AdminService;
 import com.fzz.api.BaseController;
 import com.fzz.api.controller.admin.AdminControllerApi;
-import com.fzz.bo.AddNewAdminBo;
-import com.fzz.bo.AdminUserLoginBo;
+import com.fzz.bo.AddNewAdminBO;
+import com.fzz.bo.AdminUserLoginBO;
 import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.result.ResponseStatusEnum;
 import com.fzz.common.utils.FaceVerifyUtils;
 import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AdminUser;
-import com.fzz.vo.QueryAdminVo;
+import com.fzz.vo.QueryAdminVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class AdminController extends BaseController implements AdminControllerAp
     private FaceVerifyUtils faceVerifyUtils;
 
     @Override
-    public GraceJSONResult adminLogin(AdminUserLoginBo adminUserLoginBo,
-                             BindingResult bindingResult,
-                             HttpServletRequest request,
-                             HttpServletResponse response) {
+    public GraceJSONResult adminLogin(AdminUserLoginBO adminUserLoginBo,
+                                      BindingResult bindingResult,
+                                      HttpServletRequest request,
+                                      HttpServletResponse response) {
 
         if(bindingResult.hasErrors()){
             Map<String, String> errors=getErrors(bindingResult);
@@ -83,12 +83,12 @@ public class AdminController extends BaseController implements AdminControllerAp
     public GraceJSONResult getAdminList(Integer page, Integer pageSize) {
         Page<AdminUser> adminUserPage=new Page<>(page,pageSize);
         adminService.page(adminUserPage);
-        Page<QueryAdminVo> queryAdminVoPage=new Page<>();
+        Page<QueryAdminVO> queryAdminVoPage=new Page<>();
         BeanUtils.copyProperties(adminUserPage,queryAdminVoPage,"records");
         List<AdminUser> records=adminUserPage.getRecords();
 
-        List<QueryAdminVo> list=records.stream().map(((item)->{
-            QueryAdminVo queryAdminVo=new QueryAdminVo();
+        List<QueryAdminVO> list=records.stream().map(((item)->{
+            QueryAdminVO queryAdminVo=new QueryAdminVO();
             BeanUtils.copyProperties(item,queryAdminVo);
             return queryAdminVo;
         })).collect(Collectors.toList());
@@ -111,7 +111,7 @@ public class AdminController extends BaseController implements AdminControllerAp
     }
 
     @Override
-    public GraceJSONResult addNewAdmin(AddNewAdminBo addNewAdminBo) {
+    public GraceJSONResult addNewAdmin(AddNewAdminBO addNewAdminBo) {
         if(StringUtils.isBlank(addNewAdminBo.getUsername())){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ADMIN_USERNAME_NULL_ERROR);
         }
@@ -146,7 +146,7 @@ public class AdminController extends BaseController implements AdminControllerAp
     }
 
     @Override
-    public GraceJSONResult adminFaceLogin(AdminUserLoginBo adminUserLoginBo,
+    public GraceJSONResult adminFaceLogin(AdminUserLoginBO adminUserLoginBo,
                                           HttpServletRequest request,
                                           HttpServletResponse response) {
         String username = adminUserLoginBo.getUsername();
