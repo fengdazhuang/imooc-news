@@ -2,7 +2,7 @@ package com.fzz.api.config;
 
 
 import com.fzz.common.exception.CustomException;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 

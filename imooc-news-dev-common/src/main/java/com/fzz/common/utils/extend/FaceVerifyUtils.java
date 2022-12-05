@@ -1,9 +1,9 @@
-package com.fzz.common.utils;
+package com.fzz.common.utils.extend;
 
 import com.aliyuncs.utils.Base64Helper;
 import com.fzz.common.exception.CustomException;
-import com.fzz.common.result.ResponseStatusEnum;
-import com.fzz.common.utils.extend.AliyunResource;
+import com.fzz.common.enums.ResponseStatusEnum;
+import com.fzz.common.utils.JsonUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

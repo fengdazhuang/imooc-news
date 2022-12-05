@@ -2,7 +2,7 @@ package com.fzz.api.interceptor;
 
 import com.fzz.api.BaseController;
 import com.fzz.common.exception.CustomException;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
 import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AppUser;

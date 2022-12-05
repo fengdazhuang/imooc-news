@@ -5,7 +5,7 @@ import com.fzz.api.controller.file.FileUploadControllerApi;
 import com.fzz.bo.AddNewAdminBO;
 import com.fzz.common.exception.CustomException;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.FileUtils;
 import com.fzz.file.FileResource;
 import com.fzz.file.service.FileUploadService;

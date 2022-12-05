@@ -2,7 +2,7 @@ package com.fzz.api.interceptor;
 
 import com.fzz.api.BaseController;
 import com.fzz.common.exception.CustomException;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

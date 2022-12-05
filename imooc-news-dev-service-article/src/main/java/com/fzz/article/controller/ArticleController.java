@@ -6,14 +6,14 @@ import com.fzz.api.BaseController;
 import com.fzz.api.controller.article.ArticleControllerApi;
 import com.fzz.article.service.ArticleService;
 import com.fzz.bo.AddArticleBO;
+import com.fzz.common.enums.ArticleStatusEnum;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
 import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Category;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,11 +42,14 @@ public class ArticleController extends BaseController implements ArticleControll
             pageSize=COMMON_PAGE_SIZE;
         }
         Page<Article> pageInfo=new Page<>(page,pageSize);
-        Integer[] statusNums={1,2,3,4,5};
-        List<Integer> statusList = Arrays.asList(statusNums);
         LambdaQueryWrapper<Article> queryWrapper=new LambdaQueryWrapper<>();
-        queryWrapper.eq(StringUtils.isNotBlank(String.valueOf(status) )&& statusList.contains(status),
-                Article::getArticleStatus,status);
+        if(ArticleStatusEnum.isArticleStatusValid(status)){
+            queryWrapper.eq(Article::getArticleStatus,status);
+        }
+        if(status!=null&&status==12){
+            queryWrapper.eq(Article::getArticleStatus,ArticleStatusEnum.MANAGER_REVIEW.type())
+                    .or().eq(Article::getArticleStatus,ArticleStatusEnum.AI_REVIEW.type());
+        }
         articleService.page(pageInfo,queryWrapper);
         return GraceJSONResult.ok(pageInfo);
     }
@@ -57,29 +60,27 @@ public class ArticleController extends BaseController implements ArticleControll
             Map<String, String> errors = getErrors(result);
             return GraceJSONResult.errorMap(errors);
         }
-        Date publishTime = addArticleBo.getPublishTime();
-        if(publishTime==null){
-            addArticleBo.setPublishTime(new Date());
-        }
-        Article article=new Article();
-        BeanUtils.copyProperties(addArticleBo,article);
-        if(addArticleBo.getArticleType()==2&&StringUtils.isNotBlank(addArticleBo.getArticleCover())) {
+        if(addArticleBo.getArticleType()==1&&StringUtils.isBlank(addArticleBo.getArticleCover())) {
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_COVER_NOT_EXIST_ERROR);
-        }else if(addArticleBo.getArticleType()==1){
-            article.setArticleCover(null);
+        }else if(addArticleBo.getArticleType()==2){
+            addArticleBo.setArticleCover(null);
         }
-
         String str = redisUtil.get(REDIS_ALL_CATEGORY);
         if(StringUtils.isBlank(str)){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
         }else{
             List<Category> categoryList = JsonUtils.jsonToList(str, Category.class);
             for(Category c:categoryList){
-                if(c.getId()==article.getCategoryId()){
-                    article.setArticleStatus(1);
-                    boolean res = articleService.save(article);
+                if(c.getId()==addArticleBo.getCategoryId()){
+                    boolean res = articleService.createArticle(addArticleBo,c);
                     if(res){
                         return GraceJSONResult.ok();
+                        //ai审核
+
+
+
+
+
                     }
                     return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CREATE_ERROR);
                 }
@@ -92,6 +93,9 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult queryMyList(Long userId, String keyword, Integer status,
                                        Date startDate, Date endDate, Integer page, Integer pageSize) {
+        if(userId==null){
+            return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_QUERY_PARAMS_ERROR);
+        }
         if(page==null){
             page=COMMON_START_PAGE;
         }
@@ -99,23 +103,29 @@ public class ArticleController extends BaseController implements ArticleControll
             pageSize=COMMON_PAGE_SIZE;
         }
         Page<Article> pageInfo=new Page<>(page,pageSize);
-        Integer[] statusNums={1,2,3,4,5};
-        List<Integer> statusList = Arrays.asList(statusNums);
+
         LambdaQueryWrapper<Article> queryWrapper=new LambdaQueryWrapper<>();
-        queryWrapper.eq(userId!=null,Article::getPublishUserId,userId);
-        queryWrapper.le(endDate!=null,Article::getPublishTime,endDate);
-        queryWrapper.ge(startDate!=null,Article::getPublishTime,startDate);
-        queryWrapper.eq(StringUtils.isNotBlank(String.valueOf(status) )&& statusList.contains(status),
-                Article::getArticleStatus,status);
+        queryWrapper.eq(Article::getPublishUserId,userId);
+        queryWrapper.le(endDate!=null,Article::getCreatedTime,endDate)
+                .ge(startDate!=null,Article::getCreatedTime,startDate);
+
+        if(ArticleStatusEnum.isArticleStatusValid(status)){
+            queryWrapper.eq(Article::getArticleStatus,status);
+        }
+        if(status!=null&&status==12){
+            queryWrapper.eq(Article::getArticleStatus,ArticleStatusEnum.MANAGER_REVIEW)
+                    .or().eq(Article::getArticleStatus,ArticleStatusEnum.AI_REVIEW);
+        }
         articleService.page(pageInfo,queryWrapper);
         return GraceJSONResult.ok(pageInfo);
     }
+
 
     @Override
     public GraceJSONResult doReview(Long articleId, Integer passOrNot) {
         if(articleId!=null){
             Article article = articleService.getById(articleId);
-            article.setArticleStatus(3);
+            article.setArticleStatus(passOrNot==0?ArticleStatusEnum.FAILD.type() : ArticleStatusEnum.PUBLISH.type());
             boolean res = articleService.updateById(article);
             if(res){
                 return GraceJSONResult.ok();

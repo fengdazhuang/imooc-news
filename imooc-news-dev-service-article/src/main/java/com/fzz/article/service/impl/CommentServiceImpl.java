@@ -6,8 +6,6 @@ import com.fzz.article.mapper.CommentMapper;
 import com.fzz.article.service.ArticleService;
 import com.fzz.article.service.CommentService;
 import com.fzz.bo.AddCommentBO;
-import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
 import com.fzz.pojo.AppUser;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Comments;

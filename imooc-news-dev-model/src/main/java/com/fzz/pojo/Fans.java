@@ -7,17 +7,17 @@ import lombok.Data;
 @Data
 public class Fans {
     @TableId
-    private String id;
+    private Long id;
 
     /**
      * 作家用户id
      */
-    private String writerId;
+    private Long writerId;
 
     /**
      * 粉丝用户id
      */
-    private String fanId;
+    private Long fanId;
 
     /**
      * 粉丝头像

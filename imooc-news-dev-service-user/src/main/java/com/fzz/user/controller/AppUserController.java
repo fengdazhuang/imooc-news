@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.api.BaseController;
 import com.fzz.api.controller.user.AppUserControllerApi;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AppUser;
 

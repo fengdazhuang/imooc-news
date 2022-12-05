@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fzz.bo.UpdateUserInfoBO;
 import com.fzz.common.exception.CustomException;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
 import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AppUser;

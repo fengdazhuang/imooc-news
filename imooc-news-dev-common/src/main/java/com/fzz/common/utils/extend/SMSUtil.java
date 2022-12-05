@@ -1,4 +1,4 @@
-package com.fzz.common.utils;
+package com.fzz.common.utils.extend;
 
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;

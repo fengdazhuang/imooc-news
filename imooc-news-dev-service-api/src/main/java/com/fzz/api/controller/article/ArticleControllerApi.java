@@ -22,7 +22,7 @@ public interface ArticleControllerApi {
      * @return
      */
     @PostMapping("/queryAllList")
-    @ApiOperation(value = "分页查询文章列表",notes = "管理员查询文章列表")
+    @ApiOperation(value = "管理员查询文章列表",notes = "管理员查询文章列表")
     public GraceJSONResult queryAllList(
             @RequestParam Integer status,
             @RequestParam Integer page,
@@ -35,6 +35,7 @@ public interface ArticleControllerApi {
 
 
     @PostMapping("/queryMyList")
+    @ApiOperation(value = "用户查询自己的文章",notes = "用户查询自己的文章")
     public GraceJSONResult queryMyList(@RequestParam Long userId,
                                        @RequestParam String keyword,
                                        @RequestParam Integer status,

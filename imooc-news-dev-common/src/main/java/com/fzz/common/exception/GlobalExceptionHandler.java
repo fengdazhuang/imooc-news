@@ -2,7 +2,7 @@ package com.fzz.common.exception;
 
 
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

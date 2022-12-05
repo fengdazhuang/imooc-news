@@ -4,7 +4,7 @@ import com.fzz.api.BaseController;
 import com.fzz.api.controller.user.UserControllerApi;
 import com.fzz.bo.UpdateUserInfoBO;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.pojo.AppUser;
 import com.fzz.user.service.AppUserService;
 import com.fzz.vo.UserAccountInfoVO;

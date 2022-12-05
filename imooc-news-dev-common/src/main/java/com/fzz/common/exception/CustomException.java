@@ -1,6 +1,6 @@
 package com.fzz.common.exception;
 
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import lombok.Data;
 
 @Data

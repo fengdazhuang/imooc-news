@@ -7,7 +7,7 @@ import com.fzz.api.BaseController;
 import com.fzz.api.controller.article.PortalControllerApi;
 import com.fzz.article.service.ArticleService;
 import com.fzz.common.result.GraceJSONResult;
-import com.fzz.common.result.ResponseStatusEnum;
+import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.pojo.AppUser;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Category;
