@@ -23,5 +23,5 @@ public interface CategoryControllerApi {
 
     @GetMapping("/getCats")
     @ApiOperation(value = "用户查询分类列表",notes = "用户查询分类列表")
-    public GraceJSONResult getCats();
+    public GraceJSONResult getCatsToUser();
 }

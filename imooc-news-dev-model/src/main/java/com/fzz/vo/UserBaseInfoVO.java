@@ -14,6 +14,10 @@ public class UserBaseInfoVO {
 
     private Integer activeStatus;
 
+    private Integer myFollowCounts;
+
+    private Integer myFansCounts;
+
 
 
 

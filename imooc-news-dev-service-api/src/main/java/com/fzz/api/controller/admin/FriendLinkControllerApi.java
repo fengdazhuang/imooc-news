@@ -29,5 +29,5 @@ public interface FriendLinkControllerApi {
      * 主页展现
      */
     @GetMapping("/portal/list")
-    public GraceJSONResult list();
+    public GraceJSONResult getFriendLinkListToUser();
 }

@@ -18,4 +18,16 @@ public interface FansControllerApi {
 
     @PostMapping("/queryRatioByRegion")
     public GraceJSONResult queryRatioByRegion(@RequestParam Long writerId);
+
+    @PostMapping("/isMeFollowThisWriter")
+    public GraceJSONResult isMeFollowThisWriter(@RequestParam Long writerId,
+                                                @RequestParam Long fanId);
+
+    @PostMapping("/follow")
+    public GraceJSONResult follow(@RequestParam Long writerId,
+                                  @RequestParam Long fanId);
+
+    @PostMapping("/unfollow")
+    public GraceJSONResult unfollow(@RequestParam Long writerId,
+                                  @RequestParam Long fanId);
 }

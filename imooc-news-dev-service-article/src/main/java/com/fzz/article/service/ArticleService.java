@@ -5,6 +5,8 @@ import com.fzz.bo.AddArticleBO;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Category;
 
+import java.util.List;
+
 public interface ArticleService extends IService<Article> {
 
     boolean withdrawArticle(Long articleId, Long userId);
@@ -12,4 +14,8 @@ public interface ArticleService extends IService<Article> {
     boolean deleteArticle(Long articleId, Long userId);
 
     boolean createArticle(AddArticleBO addArticleBo, Category c);
+
+    List<Article> getHotList();
+
+    Article getArticleDetailById(Long articleId);
 }

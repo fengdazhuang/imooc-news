@@ -5,6 +5,8 @@ import com.fzz.api.controller.user.UserControllerApi;
 import com.fzz.bo.UpdateUserInfoBO;
 import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.enums.ResponseStatusEnum;
+import com.fzz.common.utils.JsonUtils;
+import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AppUser;
 import com.fzz.user.service.AppUserService;
 import com.fzz.vo.UserAccountInfoVO;
@@ -16,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,9 +28,12 @@ public class UserController extends BaseController implements UserControllerApi 
     @Autowired
     private AppUserService userService;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
 
     @Override
-    public Object getAccountInfo(Long userId) {
+    public GraceJSONResult getAccountInfo(Long userId) {
         if(StringUtils.isBlank(String.valueOf(userId))){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.UN_LOGIN);
         }
@@ -37,18 +44,22 @@ public class UserController extends BaseController implements UserControllerApi 
     }
 
     @Override
-    public Object getUserInfo(Long userId) {
+    public GraceJSONResult getUserInfo(Long userId) {
         if(StringUtils.isBlank(String.valueOf(userId))){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.UN_LOGIN);
         }
         AppUser appUser = userService.queryUserById(userId);
-        UserBaseInfoVO userBaseInfoVo=new UserBaseInfoVO();
-        BeanUtils.copyProperties(appUser,userBaseInfoVo);
-        return GraceJSONResult.ok(userBaseInfoVo);
+        UserBaseInfoVO userBaseInfoVO=new UserBaseInfoVO();
+        BeanUtils.copyProperties(appUser,userBaseInfoVO);
+        Integer followCounts = getCountsFromRedis(REDIS_MY_FOLLOW_COUNTS + ":" + userId);
+        Integer fansCounts = getCountsFromRedis(REDIS_WRITER_FANS_COUNTS + ":" + userId);
+        userBaseInfoVO.setMyFansCounts(fansCounts);
+        userBaseInfoVO.setMyFollowCounts(followCounts);
+        return GraceJSONResult.ok(userBaseInfoVO);
     }
 
     @Override
-    public Object updateUserInfo(@Valid UpdateUserInfoBO appUser, BindingResult result) {
+    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO appUser, BindingResult result) {
         if(result.hasErrors()){
             Map<String, String> errors = getErrors(result);
             return GraceJSONResult.errorMap(errors);
@@ -56,6 +67,20 @@ public class UserController extends BaseController implements UserControllerApi 
         userService.updateUserById(appUser);
         return GraceJSONResult.ok();
     }
+
+    @Override
+    public GraceJSONResult queryBaseInfoByIds(String userIds) {
+        List<UserBaseInfoVO> userBaseInfoVOList=new ArrayList<>();
+        List<Long> idList = JsonUtils.jsonToList(userIds, Long.class);
+        for(Long userId:idList){
+            AppUser user = userService.queryUserById(userId);
+            UserBaseInfoVO userBaseInfoVO=new UserBaseInfoVO();
+            BeanUtils.copyProperties(user,userBaseInfoVO);
+            userBaseInfoVOList.add(userBaseInfoVO);
+        }
+        return GraceJSONResult.ok(userBaseInfoVOList);
+    }
+
 
 
 }

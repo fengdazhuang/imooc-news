@@ -1,6 +1,7 @@
 package com.fzz.article.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.api.BaseController;
 import com.fzz.api.controller.article.ArticleControllerApi;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,7 @@ public class ArticleController extends BaseController implements ArticleControll
         }
         Page<Article> pageInfo=new Page<>(page,pageSize);
         LambdaQueryWrapper<Article> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Article::getPublishTime);
         if(ArticleStatusEnum.isArticleStatusValid(status)){
             queryWrapper.eq(Article::getArticleStatus,status);
         }
@@ -124,9 +125,11 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult doReview(Long articleId, Integer passOrNot) {
         if(articleId!=null){
-            Article article = articleService.getById(articleId);
-            article.setArticleStatus(passOrNot==0?ArticleStatusEnum.FAILD.type() : ArticleStatusEnum.PUBLISH.type());
-            boolean res = articleService.updateById(article);
+            LambdaUpdateWrapper<Article> updateWrapper=new LambdaUpdateWrapper<>();
+            updateWrapper.eq(Article::getId,articleId);
+            updateWrapper.set(Article::getArticleStatus,
+                    passOrNot==0?ArticleStatusEnum.FAILD.type() : ArticleStatusEnum.PUBLISH.type());
+            boolean res = articleService.update(updateWrapper);
             if(res){
                 return GraceJSONResult.ok();
             }

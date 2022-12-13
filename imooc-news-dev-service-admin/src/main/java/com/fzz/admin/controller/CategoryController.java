@@ -50,7 +50,7 @@ public class CategoryController extends BaseController implements CategoryContro
     }
 
     @Override
-    public GraceJSONResult getCats() {
+    public GraceJSONResult getCatsToUser() {
         String str = redisUtil.get(REDIS_ALL_CATEGORY);
         if (StringUtils.isNotBlank(str)){
             return GraceJSONResult.ok(JsonUtils.jsonToList(str,Category.class));

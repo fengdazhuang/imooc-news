@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 向用户展现的文章对象
+ * 向门户网站展现的文章对象
  */
 @Data
 public class ShowArticleVO {
@@ -38,7 +38,7 @@ public class ShowArticleVO {
     /**
      * 发布者用户id
      */
-    private String publishUserId;
+    private Long publishUserId;
 
     /**
      * 文章发布时间（也是预约发布的时间）
@@ -69,6 +69,6 @@ public class ShowArticleVO {
      */
     private String content;
 
-    private PublisherVO publisherVO;
+    private UserBaseInfoVO publisherVO;
 
 }

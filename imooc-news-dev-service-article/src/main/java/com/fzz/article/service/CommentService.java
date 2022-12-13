@@ -7,5 +7,5 @@ import com.fzz.pojo.Comments;
 public interface CommentService extends IService<Comments> {
     boolean createComment(AddCommentBO addCommentBO);
 
-    boolean deleteComment(Long writerId, Long commentId);
+    Long deleteComment(Long writerId, Long commentId);
 }

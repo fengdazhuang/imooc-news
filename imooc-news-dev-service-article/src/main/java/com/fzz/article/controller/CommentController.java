@@ -8,6 +8,7 @@ import com.fzz.article.service.CommentService;
 import com.fzz.bo.AddCommentBO;
 import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.enums.ResponseStatusEnum;
+import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.Comments;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -20,6 +21,9 @@ public class CommentController extends BaseController implements CommentControll
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
 
 
@@ -47,6 +51,8 @@ public class CommentController extends BaseController implements CommentControll
         }
         boolean res=commentService.createComment(addCommentBO);
         if(res){
+            redisUtil.increment(REDIS_ARTICLE_COMMENT_COUNTS+":"+addCommentBO.getArticleId(),1);
+
             return GraceJSONResult.ok();
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.COMMENT_CREATE_ERROR);
@@ -70,12 +76,19 @@ public class CommentController extends BaseController implements CommentControll
     }
 
     @Override
+    public GraceJSONResult getCommentsCounts(Long articleId) {
+        Integer commentsCounts = getCountsFromRedis(REDIS_ARTICLE_COMMENT_COUNTS + ":" + articleId);
+        return GraceJSONResult.ok(commentsCounts);
+    }
+
+    @Override
     public GraceJSONResult deleteComment(Long writerId, Long commentId) {
         if(writerId==null||commentId==null){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
         }
-        boolean res=commentService.deleteComment(writerId,commentId);
-        if(res){
+        Long articleId = commentService.deleteComment(writerId, commentId);
+        if(articleId!=null){
+            redisUtil.decrement(REDIS_ARTICLE_COMMENT_COUNTS+":"+articleId,1);
             return GraceJSONResult.ok();
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.COMMENT_DELETE_ERROR);

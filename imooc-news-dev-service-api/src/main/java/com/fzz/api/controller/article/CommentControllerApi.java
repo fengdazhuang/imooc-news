@@ -26,5 +26,8 @@ public interface CommentControllerApi {
     @PostMapping("/delete")
     public GraceJSONResult deleteComment(@RequestParam Long writerId,Long commentId);
 
+    @GetMapping("/counts")
+    public GraceJSONResult getCommentsCounts(@RequestParam Long articleId);
+
 
 }

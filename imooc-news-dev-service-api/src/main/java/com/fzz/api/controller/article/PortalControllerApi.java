@@ -2,8 +2,11 @@ package com.fzz.api.controller.article;
 
 import com.fzz.common.result.GraceJSONResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RequestMapping("/portal")
 public interface PortalControllerApi {
@@ -20,4 +23,18 @@ public interface PortalControllerApi {
 
     @GetMapping("/article/detail")
     public GraceJSONResult showArticleDetail(@RequestParam Long articleId);
+
+    @GetMapping("/article/queryArticleListOfWriter")
+    public GraceJSONResult queryArticleOfWriter(@RequestParam Long writerId,
+                                                    @RequestParam Integer page,
+                                                    @RequestParam Integer pageSize);
+
+    @GetMapping("/article/queryGoodArticleListOfWriter")
+    public GraceJSONResult queryGoodArticleOfWriter(@RequestParam Long writerId);
+
+
+    @PostMapping("/article/readArticle")
+    public GraceJSONResult readArticle(@RequestParam Long articleId, HttpServletRequest request);
+
+
 }
