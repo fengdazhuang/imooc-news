@@ -1,14 +1,8 @@
 spring:
   application:
-    name: service-article
+    name: service-article-html
   profiles:
     active: dev
-  datasource:
-    url: jdbc:mysql://localhost:3306/imooc-news-dev?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    type: com.alibaba.druid.pool.DruidDataSource
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
@@ -31,14 +25,6 @@ spring:
 #    # 连接池中的最小空闲连接
 #        min-idle: 0
 
-
-mybatis-plus:
-  configuration:
-    map-underscore-to-camel-case: true
-  global-config:
-    db-config:
-      # 主键生成策略
-      id-type: ASSIGN_ID
 
 freemarker:
   html:

@@ -6,19 +6,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fzz.article.mapper.ArticleMapper;
 import com.fzz.article.service.ArticleService;
 import com.fzz.bo.AddArticleBO;
-import com.fzz.common.result.GraceJSONResult;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Category;
-import com.fzz.vo.ArticleDetailVO;
-import com.fzz.vo.UserBaseInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {

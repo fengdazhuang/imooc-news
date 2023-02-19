@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/portal")
 public interface PortalControllerApi {
 
-    ///portal/article/list?keyword=&category=&page=1&pageSize=15
     @GetMapping("/article/list")
     public GraceJSONResult listArticlesToUser(@RequestParam String keyword,
                                 @RequestParam Integer category,
@@ -23,6 +22,9 @@ public interface PortalControllerApi {
 
     @GetMapping("/article/detail")
     public GraceJSONResult showArticleDetail(@RequestParam Long articleId);
+
+    @GetMapping("/article/readCounts")
+    public Integer getReadCounts(@RequestParam Long articleId);
 
     @GetMapping("/article/queryArticleListOfWriter")
     public GraceJSONResult queryArticleOfWriter(@RequestParam Long writerId,

@@ -159,6 +159,13 @@ public class PortalController extends BaseController implements PortalController
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_NOT_EXIST_ERROR);
     }
 
+
+    @Override
+    public Integer getReadCounts(Long articleId) {
+
+        return getCountsFromRedis(REDIS_ARTICLE_READ_COUNTS+":"+articleId);
+    }
+
     @Override
     public GraceJSONResult queryArticleOfWriter(Long writerId, Integer page, Integer pageSize) {
         if(writerId==null){

@@ -8,18 +8,34 @@ import com.fzz.api.controller.article.ArticleControllerApi;
 import com.fzz.article.service.ArticleService;
 import com.fzz.bo.AddArticleBO;
 import com.fzz.common.enums.ArticleStatusEnum;
+import com.fzz.common.exception.CustomException;
 import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
 import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Category;
+import com.fzz.vo.ArticleDetailVO;
+import com.mongodb.client.gridfs.GridFSBucket;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import io.swagger.models.auth.In;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.*;
+import java.net.URLDecoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +47,9 @@ public class ArticleController extends BaseController implements ArticleControll
 
     @Autowired
     private RedisUtil redisUtil;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     @Override
@@ -128,9 +147,18 @@ public class ArticleController extends BaseController implements ArticleControll
             LambdaUpdateWrapper<Article> updateWrapper=new LambdaUpdateWrapper<>();
             updateWrapper.eq(Article::getId,articleId);
             updateWrapper.set(Article::getArticleStatus,
-                    passOrNot==0?ArticleStatusEnum.FAILD.type() : ArticleStatusEnum.PUBLISH.type());
+                    passOrNot==ArticleStatusEnum.NOT_PASS.type()?ArticleStatusEnum.FAILD.type() : ArticleStatusEnum.PUBLISH.type());
             boolean res = articleService.update(updateWrapper);
             if(res){
+                if(passOrNot==ArticleStatusEnum.PASS.type()){
+                    try {
+                        String mongoFileId = createArticleHTMLToGridFS(articleId);
+                        updateArticleWithMongodb(articleId,mongoFileId);
+                        doDownloadArticleHTML(articleId,mongoFileId);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 return GraceJSONResult.ok();
             }
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
@@ -138,11 +166,92 @@ public class ArticleController extends BaseController implements ArticleControll
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
     }
 
+
+    @Autowired
+    private GridFSBucket gridFSBucket;
+
+
+    /**
+     * 将文章上传至mongodb的Gridfs
+     * @param articleId 文章id
+     * @return mongodbId
+     * @throws Exception
+     */
+    private String createArticleHTMLToGridFS(Long articleId) throws Exception{
+        Configuration configuration = new Configuration(Configuration.getVersion());
+        String classpath = this.getClass().getResource("/").getPath();
+        classpath = URLDecoder.decode(classpath, "utf-8");
+        configuration.setDirectoryForTemplateLoading(new File(classpath+"templates"));
+
+        Template template = configuration.getTemplate("detail.ftl", "utf-8");
+
+        ArticleDetailVO articleDetail = getArticleDetail(articleId);
+        Map<String ,Object> map=new HashMap<>();
+        map.put("articleDetail",articleDetail);
+
+        String string = FreeMarkerTemplateUtils.processTemplateIntoString(template, map);
+        InputStream inputStream = IOUtils.toInputStream(string);
+
+        ObjectId objectId = gridFSBucket.uploadFromStream("" + articleId, inputStream);
+
+        return objectId.toString();
+
+    }
+
+
+
+    /**
+     * 关联文章与mongodb
+     * @param articleId 文章id
+     * @param mongoFileId 文章对应的mongodbId
+     * @return 状态码200
+     */
+    private void updateArticleWithMongodb(Long articleId,String mongoFileId){
+
+        LambdaUpdateWrapper<Article> updateWrapper=new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Article::getId,articleId);
+        updateWrapper.set(Article::getMongoFileId,mongoFileId);
+        articleService.update(updateWrapper);
+
+    }
+
+    /**
+     * 下载存储在mongodb中的articlehtml文件
+     * @param mongoFileId mongdbId
+     * @throws Exception 异常
+     */
+    private void doDownloadArticleHTML(Long articleId, String mongoFileId) throws Exception {
+        String url="http://html.imoocnews.com:8002/article/html/download?articleId="
+                +articleId+"&mongoFileId="+mongoFileId;
+        ResponseEntity<Integer> entity = restTemplate.getForEntity(url, Integer.class);
+        Integer status = entity.getBody();
+        if(!(status==HttpStatus.OK.value())){
+            throw new CustomException(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
+        }
+
+    }
+
+
+
+    public ArticleDetailVO getArticleDetail(Long articleId){
+        String path="http://article.imoocnews.com:8001/portal/article/detail?articleId="+articleId;
+        ResponseEntity<GraceJSONResult> entity = restTemplate.getForEntity(path, GraceJSONResult.class);
+        GraceJSONResult body = entity.getBody();
+        ArticleDetailVO articleDetailVO=null;
+        if(body.getStatus()==200){
+            String json = JsonUtils.objectToJson(body.getData());
+            articleDetailVO = JsonUtils.jsonToPojo(json, ArticleDetailVO.class);
+        }
+        return articleDetailVO;
+    }
+
     @Override
     public GraceJSONResult withdraw(Long articleId, Long userId) {
         if(articleId!=null&&userId!=null){
+            deleteArticleHTML(articleId);
             boolean res=articleService.withdrawArticle(articleId,userId);
             if(res){
+
                 return GraceJSONResult.ok();
             }
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_WITHDRAW_ERROR);
@@ -153,13 +262,34 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult delete(Long articleId, Long userId) {
         if(articleId!=null&&userId!=null){
+            deleteArticleHTML(articleId);
             boolean res = articleService.deleteArticle(articleId, userId);
             if(res){
+
                 return GraceJSONResult.ok();
             }
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_DELETE_ERROR);
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_DELETE_ERROR);
+    }
+
+    @Value("${freemarker.html.targert}")
+    private String articlePath;
+
+    private void deleteArticleHTML(Long articleId){
+        String url="http://html.imoocnews.com:8002/article/html/delete?articleId="+articleId;
+        ResponseEntity<Integer> entity = restTemplate.getForEntity(url, Integer.class);
+        Integer body = entity.getBody();
+        if(!(body==HttpStatus.OK.value())){
+            throw new CustomException(ResponseStatusEnum.ARTICLE_WITHDRAW_ERROR);
+        }
+        String articleUrl=articlePath+File.separator+articleId+".html";
+        System.out.println(articleUrl);
+        File articleName = new File(articleUrl);
+        System.out.println(articleName);
+        if(articleName.exists()){
+            articleName.delete();
+        }
     }
 
 

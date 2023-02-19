@@ -12,6 +12,7 @@
         <module>imooc-news-dev-service-file</module>
         <module>imooc-news-dev-service-article</module>
         <module>imooc-news-dev-service-admin</module>
+        <module>imooc-news-dev-service-article-html</module>
     </modules>
 
     <!--  统一springboot的版本，后续springboot系列不要加版本号
@@ -50,6 +51,8 @@
 
         <slf4j.version>1.7.21</slf4j.version>
         <joda-time.version>2.10.6</joda-time.version>
+
+        <springboot-freemarker-version>2.3.4.RELEASE</springboot-freemarker-version>
     </properties>
 
     <dependencyManagement>
@@ -173,6 +176,14 @@
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
             </dependency>
+
+            <!-- 静态化html页面-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-freemarker</artifactId>
+                <version>${springboot-freemarker-version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

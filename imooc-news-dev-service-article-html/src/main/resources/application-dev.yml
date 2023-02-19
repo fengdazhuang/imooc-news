@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8002
 
 spring:
   redis:
@@ -13,9 +13,6 @@ spring:
       uri: mongodb://root:root@43.142.253.194:27017/imooc-news?authSource=admin
 
 
-
 website:
   domain-name: imooc-news.com
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+

@@ -19,7 +19,11 @@ public class ArticleDetailVO {
 
     private Integer commentCounts;
 
+    private Long publishUserId;
+
     private String publishUserName;
+
+    private String mongoFileId;
 
 
 }

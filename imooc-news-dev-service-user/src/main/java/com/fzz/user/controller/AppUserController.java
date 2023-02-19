@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 管理员的操作
+ */
 
 @RestController
 public class AppUserController extends BaseController implements AppUserControllerApi {

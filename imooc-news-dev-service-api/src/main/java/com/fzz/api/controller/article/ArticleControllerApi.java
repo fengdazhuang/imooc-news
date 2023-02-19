@@ -47,7 +47,7 @@ public interface ArticleControllerApi {
     @PostMapping("/doReview")
     @ApiOperation(value = "管理员审核文章",notes = "管理员审核文章")
     public GraceJSONResult doReview(@RequestParam Long articleId,
-                                    @RequestParam Integer passOrNot);
+                                    @RequestParam Integer passOrNot) throws Exception;
 
     @PostMapping("/withdraw")
     @ApiOperation(value = "用户撤回文章",notes = "用户撤回文章")

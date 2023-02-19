@@ -6,7 +6,10 @@ public enum ArticleStatusEnum {
     MANAGER_REVIEW(2,"机审结束，等待人工审核"),
     PUBLISH(3,"审核完毕，已成功发布"),
     FAILD(4,"文章审核未通过"),
-    WITHDRAW(5,"文章已撤回");
+    WITHDRAW(5,"文章已撤回"),
+
+    PASS(1,"审核通过"),
+    NOT_PASS(0,"审核未通过");
 
 
 
