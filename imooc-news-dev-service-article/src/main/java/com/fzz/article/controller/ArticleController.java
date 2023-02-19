@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.api.BaseController;
+import com.fzz.api.config.RabbitmqConfig;
 import com.fzz.api.controller.article.ArticleControllerApi;
+import com.fzz.article.MyCallbackConfig;
 import com.fzz.article.service.ArticleService;
 import com.fzz.bo.AddArticleBO;
 import com.fzz.common.enums.ArticleStatusEnum;
@@ -23,6 +25,7 @@ import io.swagger.models.auth.In;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -32,6 +35,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.Date;
@@ -154,7 +158,9 @@ public class ArticleController extends BaseController implements ArticleControll
                     try {
                         String mongoFileId = createArticleHTMLToGridFS(articleId);
                         updateArticleWithMongodb(articleId,mongoFileId);
-                        doDownloadArticleHTML(articleId,mongoFileId);
+                        //doDownloadArticleHTML(articleId,mongoFileId);
+
+                        doDownloadArticleHTMLByMQ(articleId,mongoFileId);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -229,6 +235,25 @@ public class ArticleController extends BaseController implements ArticleControll
             throw new CustomException(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
         }
 
+    }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private MyCallbackConfig myCallbackConfig;
+
+    @PostConstruct
+    public void init(){
+        rabbitTemplate.setConfirmCallback(myCallbackConfig);
+        rabbitTemplate.setMandatory(true);
+        rabbitTemplate.setReturnCallback(myCallbackConfig);
+    }
+
+    private void doDownloadArticleHTMLByMQ(Long articleId, String mongoFileId) {
+
+        rabbitTemplate.convertAndSend(RabbitmqConfig.EXCHANGE_ARTICLE,"article.html.download",
+                articleId+","+mongoFileId);
     }
 
 

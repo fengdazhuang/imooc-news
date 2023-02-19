@@ -20,6 +20,13 @@ spring:
     suffix: .ftl
     content-type: text/html
 
+  rabbitmq:
+    host: 43.142.253.194
+    port: 5672
+    username: admin
+    password: 123
+
+
 
 #    jedis:
 #      pool:
