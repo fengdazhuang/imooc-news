@@ -35,7 +35,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 import java.io.*;
 import java.net.URLDecoder;
 import java.util.Date;
@@ -240,15 +239,6 @@ public class ArticleController extends BaseController implements ArticleControll
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    private MyCallbackConfig myCallbackConfig;
-
-    @PostConstruct
-    public void init(){
-        rabbitTemplate.setConfirmCallback(myCallbackConfig);
-        rabbitTemplate.setMandatory(true);
-        rabbitTemplate.setReturnCallback(myCallbackConfig);
-    }
 
     private void doDownloadArticleHTMLByMQ(Long articleId, String mongoFileId) {
 
@@ -273,12 +263,16 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult withdraw(Long articleId, Long userId) {
         if(articleId!=null&&userId!=null){
-            deleteArticleHTML(articleId);
-            boolean res=articleService.withdrawArticle(articleId,userId);
-            if(res){
+            //deleteArticleHTML(articleId);
+            Integer integer = deleteArticleHTMLByMQ(articleId);
+            if(integer==200){
+                boolean res=articleService.withdrawArticle(articleId,userId);
+                if(res){
 
-                return GraceJSONResult.ok();
+                    return GraceJSONResult.ok();
+                }
             }
+
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_WITHDRAW_ERROR);
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_WITHDRAW_ERROR);
@@ -287,12 +281,15 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult delete(Long articleId, Long userId) {
         if(articleId!=null&&userId!=null){
-            deleteArticleHTML(articleId);
-            boolean res = articleService.deleteArticle(articleId, userId);
-            if(res){
-
-                return GraceJSONResult.ok();
+            //deleteArticleHTML(articleId);
+            Integer integer = deleteArticleHTMLByMQ(articleId);
+            if(integer==200){
+                boolean res = articleService.deleteArticle(articleId, userId);
+                if(res){
+                    return GraceJSONResult.ok();
+                }
             }
+
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_DELETE_ERROR);
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_DELETE_ERROR);
@@ -309,12 +306,18 @@ public class ArticleController extends BaseController implements ArticleControll
             throw new CustomException(ResponseStatusEnum.ARTICLE_WITHDRAW_ERROR);
         }
         String articleUrl=articlePath+File.separator+articleId+".html";
-        System.out.println(articleUrl);
         File articleName = new File(articleUrl);
-        System.out.println(articleName);
         if(articleName.exists()){
             articleName.delete();
         }
+    }
+
+    private Integer deleteArticleHTMLByMQ(Long articleId){
+
+        rabbitTemplate.convertAndSend(RabbitmqConfig.EXCHANGE_ARTICLE,"article.html.delete",
+                articleId+"");
+        return HttpStatus.OK.value();
+
     }
 
 

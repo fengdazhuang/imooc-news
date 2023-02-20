@@ -28,7 +28,7 @@ public class ArticleHTMLComponent{
     private RestTemplate restTemplate;
 
 
-    public Integer downloadArticleHTML(Long articleId, String mongoFileId) throws Exception {
+    public Integer downloadArticleHTMLByMQ(Long articleId, String mongoFileId) throws Exception {
         String path=articlePath+ File.separator+articleId+".html";
         FileOutputStream outputStream = new FileOutputStream(new File(path));
         gridFSBucket.downloadToStream(new ObjectId(mongoFileId),outputStream);
@@ -47,11 +47,13 @@ public class ArticleHTMLComponent{
         return articleDetailVO;
     }
 
-    public Integer deleteArticleHTML(Long articleId){
+    public Integer deleteArticleHTMLByMQ(Long articleId){
         ArticleDetailVO articleDetail = getArticleDetail(articleId);
         String mongoFileId = articleDetail.getMongoFileId();
         gridFSBucket.delete(new ObjectId(mongoFileId));
-
+        String articleUrl=articlePath+File.separator+articleId+".html";
+        File articleName = new File(articleUrl);
+        articleName.delete();
         return HttpStatus.OK.value();
     }
 }

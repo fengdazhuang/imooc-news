@@ -23,8 +23,9 @@ public class RabbitmqConfig {
         return QueueBuilder.durable(QUEUE_DOWNLOAD_HTML).build();
     }
 
+
     @Bean
-    public Binding binding(@Qualifier(EXCHANGE_ARTICLE) Exchange exchange,
+    public Binding binding2(@Qualifier(EXCHANGE_ARTICLE) Exchange exchange,
                            @Qualifier(QUEUE_DOWNLOAD_HTML) Queue queue){
         return BindingBuilder.bind(queue).to(exchange).with("article.*.*").noargs();
     }

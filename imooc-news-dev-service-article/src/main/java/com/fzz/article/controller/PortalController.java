@@ -152,6 +152,7 @@ public class PortalController extends BaseController implements PortalController
             set.add(article.getPublishUserId());
             List<UserBaseInfoVO> userBaseInfoListByIds = restTemplateService.getUserBaseInfoListByIds(set);
             articleDetailVO.setPublishUserName(userBaseInfoListByIds.get(0).getNickname());
+            articleDetailVO.setPublishUserId(userBaseInfoListByIds.get(0).getId());
             articleDetailVO.setReadCounts(getCountsFromRedis(REDIS_ARTICLE_READ_COUNTS+":"+articleId));
             articleDetailVO.setCommentCounts(getCountsFromRedis(REDIS_ARTICLE_COMMENT_COUNTS+":"+articleId));
             return GraceJSONResult.ok(articleDetailVO);
