@@ -13,7 +13,9 @@ public interface ArticleService extends IService<Article> {
 
     boolean deleteArticle(Long articleId, Long userId);
 
-    boolean createArticle(AddArticleBO addArticleBo, Category c);
+    boolean createArticle(AddArticleBO addArticleBo);
+
+     void updateDelayedArticle(Long articleId);
 
     List<Article> getHotList();
 

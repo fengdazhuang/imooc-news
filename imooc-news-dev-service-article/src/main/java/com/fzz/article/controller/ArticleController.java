@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.api.BaseController;
 import com.fzz.api.config.RabbitmqConfig;
+import com.fzz.api.config.RabbitmqDelayConfig;
 import com.fzz.api.controller.article.ArticleControllerApi;
 import com.fzz.article.MyCallbackConfig;
 import com.fzz.article.service.ArticleService;
@@ -24,7 +25,12 @@ import freemarker.template.Template;
 import io.swagger.models.auth.In;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.bson.types.ObjectId;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageDeliveryMode;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,6 +59,12 @@ public class ArticleController extends BaseController implements ArticleControll
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Value("${freemarker.html.targert}")
+    private String articlePath;
 
 
     @Override
@@ -91,25 +103,22 @@ public class ArticleController extends BaseController implements ArticleControll
         String str = redisUtil.get(REDIS_ALL_CATEGORY);
         if(StringUtils.isBlank(str)){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
-        }else{
-            List<Category> categoryList = JsonUtils.jsonToList(str, Category.class);
-            for(Category c:categoryList){
-                if(c.getId()==addArticleBo.getCategoryId()){
-                    boolean res = articleService.createArticle(addArticleBo,c);
-                    if(res){
-                        return GraceJSONResult.ok();
-                        //ai审核
-
-
-
-
-
-                    }
-                    return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CREATE_ERROR);
-                }
-            }
-            return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CATEGORY_NOT_EXIST_ERROR);
         }
+        List<Category> categoryList = JsonUtils.jsonToList(str, Category.class);
+        for(Category c:categoryList){
+            if(c.getId()==addArticleBo.getCategoryId()){
+
+                boolean res = articleService.createArticle(addArticleBo);
+                if(res){
+                    return GraceJSONResult.ok();
+                    //ai审核
+
+                }
+                return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CREATE_ERROR);
+            }
+        }
+        return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_CATEGORY_NOT_EXIST_ERROR);
+
 
     }
 
@@ -170,6 +179,9 @@ public class ArticleController extends BaseController implements ArticleControll
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
     }
+
+
+
 
 
     @Autowired
@@ -236,8 +248,7 @@ public class ArticleController extends BaseController implements ArticleControll
 
     }
 
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
+
 
 
     private void doDownloadArticleHTMLByMQ(Long articleId, String mongoFileId) {
@@ -295,8 +306,7 @@ public class ArticleController extends BaseController implements ArticleControll
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_DELETE_ERROR);
     }
 
-    @Value("${freemarker.html.targert}")
-    private String articlePath;
+
 
     private void deleteArticleHTML(Long articleId){
         String url="http://html.imoocnews.com:8002/article/html/delete?articleId="+articleId;

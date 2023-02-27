@@ -21,7 +21,7 @@ public class RabbitMQConsumer {
             String s = new String(message.getBody());
             System.out.println(s);
             String[] split = s.split(",");
-            Long articleId=Long.parseLong(split[0]);
+            Long articleId=Long.valueOf(split[0]);
             String mongoFileId = split[1];
             System.out.println(articleId+"+"+mongoFileId);
             articleHTMLComponent.downloadArticleHTMLByMQ(articleId,mongoFileId);
