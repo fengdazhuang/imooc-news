@@ -16,7 +16,7 @@ public interface CommentControllerApi {
                                                  @RequestParam Integer pageSize);
 
     @PostMapping("/createComment")
-    public GraceJSONResult createComment(@RequestBody @Valid AddCommentBO addCommentBO, BindingResult result);
+    public GraceJSONResult createComment(@RequestBody @Valid AddCommentBO addCommentBO);
 
     @PostMapping("/mng")
     public GraceJSONResult listMyComments(@RequestParam Long writerId,

@@ -31,7 +31,7 @@ public interface ArticleControllerApi {
 
     @PostMapping("/createArticle")
     @ApiOperation(value = "用户发布文章",notes = "用户发布文章")
-    public GraceJSONResult createArticle(@RequestBody @Valid AddArticleBO article, BindingResult result);
+    public GraceJSONResult createArticle(@RequestBody @Valid AddArticleBO article);
 
 
     @PostMapping("/queryMyList")

@@ -6,30 +6,25 @@ import com.fzz.bo.UpdateUserInfoBO;
 import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
-import com.fzz.common.utils.RedisUtil;
 import com.fzz.pojo.AppUser;
 import com.fzz.user.service.AppUserService;
 import com.fzz.vo.UserAccountInfoVO;
 import com.fzz.vo.UserBaseInfoVO;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class UserController extends BaseController implements UserControllerApi {
 
     @Autowired
     private AppUserService userService;
-
-    @Autowired
-    private RedisUtil redisUtil;
 
 
     @Override
@@ -59,16 +54,14 @@ public class UserController extends BaseController implements UserControllerApi 
     }
 
     @Override
-    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO appUser, BindingResult result) {
-        if(result.hasErrors()){
-            Map<String, String> errors = getErrors(result);
-            return GraceJSONResult.errorMap(errors);
-        }
+    public GraceJSONResult updateUserInfo(@Valid UpdateUserInfoBO appUser) {
+
         userService.updateUserById(appUser);
         return GraceJSONResult.ok();
     }
 
     @Override
+    @HystrixCommand(fallbackMethod = "queryBaseInfoByIdsFallback")
     public GraceJSONResult queryBaseInfoByIds(String userIds) {
         List<UserBaseInfoVO> userBaseInfoVOList=new ArrayList<>();
         List<Long> idList = JsonUtils.jsonToList(userIds, Long.class);
@@ -77,6 +70,17 @@ public class UserController extends BaseController implements UserControllerApi 
             UserBaseInfoVO userBaseInfoVO=new UserBaseInfoVO();
             BeanUtils.copyProperties(user,userBaseInfoVO);
             userBaseInfoVOList.add(userBaseInfoVO);
+        }
+        return GraceJSONResult.ok(userBaseInfoVOList);
+    }
+
+    public GraceJSONResult queryBaseInfoByIdsFallback(String userIds) {
+        System.out.println("进入熔断降级方法");
+        List<UserBaseInfoVO> userBaseInfoVOList=new ArrayList<>();
+        List<Long> idList = JsonUtils.jsonToList(userIds, Long.class);
+        for(Long userId:idList){
+            UserBaseInfoVO user = new UserBaseInfoVO();
+            userBaseInfoVOList.add(user);
         }
         return GraceJSONResult.ok(userBaseInfoVOList);
     }

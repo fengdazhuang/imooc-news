@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: springcloud-config
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+#------config配置中心配置
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/fengdazhuang/imooc-news-config.git
+          username: fengdazhuang
+      label: main
+
+eureka:
+  server:
+    hostname: eureka
+    port: 7000
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.server.hostname}:${eureka.server.port}/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 5000
+    lease-expiration-duration-in-seconds: 5000
+
+
+
+
+
+

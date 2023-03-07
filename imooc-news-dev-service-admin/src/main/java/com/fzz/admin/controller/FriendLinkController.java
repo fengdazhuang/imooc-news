@@ -27,14 +27,9 @@ public class FriendLinkController extends BaseController implements FriendLinkCo
     }
 
     @Override
-    public GraceJSONResult saveOrUpdateFriendLink(AddFriendLinkBO addFriendLinkBo, BindingResult result) {
-        if(result.hasErrors()){
-            Map<String, String> errors = getErrors(result);
-            return GraceJSONResult.errorMap(errors);
-        }
+    public GraceJSONResult saveOrUpdateFriendLink(AddFriendLinkBO addFriendLinkBo) {
         FriendLinkMO friendLink=new FriendLinkMO();
         BeanUtils.copyProperties(addFriendLinkBo,friendLink);
-
         friendLinkService.saveOrUpdateFriendLink(friendLink);
         return GraceJSONResult.ok();
     }

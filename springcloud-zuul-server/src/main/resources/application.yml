@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: springcloud-zuul
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/imooc-news-dev?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+eureka:
+  server:
+    hostname: eureka
+    port: 7000
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.server.hostname}:${eureka.server.port}/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 5000
+    lease-expiration-duration-in-seconds: 5000
+
+
+
+########################################################
+#-------------------zuul网关配置--------------------------
+########################################################
+zuul:
+  routes:
+    service-article:
+      url: http://localhost:8001
+      path: /service-article/**
+
+#    service-article: /service-article/**
+
+
+
+blackIp:
+  continueCounts: 10
+  timeInterval: 10
+  limitTimes: 15
+
+
+
+
+

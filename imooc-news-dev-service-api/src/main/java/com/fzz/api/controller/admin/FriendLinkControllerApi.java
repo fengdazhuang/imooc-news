@@ -19,7 +19,7 @@ public interface FriendLinkControllerApi {
     public GraceJSONResult getFriendLinkList();
 
     @PostMapping("/saveOrUpdateFriendLink")
-    public GraceJSONResult saveOrUpdateFriendLink(@RequestBody @Valid AddFriendLinkBO addFriendLinkBo, BindingResult result);
+    public GraceJSONResult saveOrUpdateFriendLink(@RequestBody @Valid AddFriendLinkBO addFriendLinkBo);
 
     @PostMapping("/delete")
     public GraceJSONResult deleteFriendLink(@RequestParam String linkId);

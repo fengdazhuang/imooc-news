@@ -49,17 +49,9 @@ public class PassportController extends BaseController implements PassportContro
 
     @Override
     public GraceJSONResult doLogin(@RequestBody  @Valid AppUserLoginBO loginDto,
-                          BindingResult bindingResult,
                           HttpServletRequest request,
                           HttpServletResponse response) {
-        /**
-         * 0：格式判断
-         *
-         */
-        if(bindingResult.hasErrors()){
-            Map<String, String> errors = new BaseController().getErrors(bindingResult);
-            return GraceJSONResult.errorMap(errors);
-        }
+
         String mobile = loginDto.getMobile();
         String smsCode = loginDto.getSmsCode();
 

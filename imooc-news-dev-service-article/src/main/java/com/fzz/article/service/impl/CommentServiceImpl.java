@@ -2,11 +2,13 @@ package com.fzz.article.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fzz.api.controller.RestTemplateService;
+import com.fzz.api.controller.user.UserControllerApi;
 import com.fzz.article.mapper.CommentMapper;
 import com.fzz.article.service.ArticleService;
 import com.fzz.article.service.CommentService;
 import com.fzz.bo.AddCommentBO;
+import com.fzz.common.result.GraceJSONResult;
+import com.fzz.common.utils.JsonUtils;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Comments;
 import com.fzz.vo.UserBaseInfoVO;
@@ -24,7 +26,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comments> imp
     private ArticleService articleService;
 
     @Autowired
-    private RestTemplateService restTemplateService;
+    private UserControllerApi userControllerApi;
+
+
 
     @Override
     @Transactional
@@ -34,7 +38,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comments> imp
         Article article = articleService.getById(articleId);
         Set<Long> set=new HashSet<>();
         set.add(commentUserId);
-        List<UserBaseInfoVO> list = restTemplateService.getUserBaseInfoListByIds(set);
+        List<UserBaseInfoVO> list = getUserBaseInfoListByIds(set);
         UserBaseInfoVO userBaseInfoVO = list.get(0);
         //判断文章和用户是否存在
         if(article !=null&&  userBaseInfoVO!=null){
@@ -61,6 +65,17 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comments> imp
             return comments.getArticleId();
         }
         return null;
+    }
+
+    public List<UserBaseInfoVO> getUserBaseInfoListByIds(Set<Long> set){
+
+        GraceJSONResult result = userControllerApi.queryBaseInfoByIds(JsonUtils.objectToJson(set));
+        List<UserBaseInfoVO> list=new ArrayList<>();
+        if(result.getStatus()==200){
+            String json = JsonUtils.objectToJson(result.getData());
+            list=JsonUtils.jsonToList(json, UserBaseInfoVO.class);
+        }
+        return list;
     }
 
 

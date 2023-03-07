@@ -9,8 +9,6 @@ spring:
     password:
     timeout: 5000
 
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 
 

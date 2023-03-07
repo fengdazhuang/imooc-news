@@ -45,14 +45,9 @@ public class AdminController extends BaseController implements AdminControllerAp
 
     @Override
     public GraceJSONResult adminLogin(AdminUserLoginBO adminUserLoginBo,
-                                      BindingResult bindingResult,
                                       HttpServletRequest request,
                                       HttpServletResponse response) {
 
-        if(bindingResult.hasErrors()){
-            Map<String, String> errors=getErrors(bindingResult);
-            return GraceJSONResult.errorMap(errors);
-        }
         String username=adminUserLoginBo.getUsername();
 
         AdminUser adminUser=adminService.getAdminByUsername(username);

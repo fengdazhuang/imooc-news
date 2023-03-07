@@ -13,15 +13,8 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-#    jedis:
-#      pool:
-#        max-active: 8   # 连接池最大连接数（使用负值表示没有限制）
-#    # 连接池最大阻塞等待时间（使用负值表示没有限制）
-#        max-wait: -1
-#    # 连接池中的最大空闲连接
-#        max-idle: 8
-#    # 连接池中的最小空闲连接
-#        min-idle: 0
+
+
 
 
 mybatis-plus:
@@ -31,3 +24,36 @@ mybatis-plus:
     db-config:
       # 主键生成策略
       id-type: ASSIGN_ID
+
+
+
+eureka:
+  server:
+    hostname: eureka
+    port: 7000
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.server.hostname}:${eureka.server.port}/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 5000
+    lease-expiration-duration-in-seconds: 5000
+
+feign:
+  hystrix:
+    enabled: true
+
+hystrix:
+  command:
+    default:
+      excution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 2000  #hystrix超时时间，超过时间触发降级
+      circuitBreaker:
+        enabled: true
+        requestVolumeThreshold: 10        # 触发熔断最小请求次数
+        sleepWindowInMilliseconds: 10000     # 熔断后过几秒后尝试半开状态
+        errorThresholdPercentage: 50        #触发熔断的失败率
+

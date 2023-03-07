@@ -3,8 +3,8 @@ package com.fzz.article.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.api.BaseController;
-import com.fzz.api.controller.RestTemplateService;
 import com.fzz.api.controller.article.PortalControllerApi;
+import com.fzz.api.controller.user.UserControllerApi;
 import com.fzz.article.service.ArticleService;
 import com.fzz.common.enums.ArticleStatusEnum;
 import com.fzz.common.result.GraceJSONResult;
@@ -20,9 +20,7 @@ import com.fzz.vo.UserBaseInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -42,7 +40,7 @@ public class PortalController extends BaseController implements PortalController
     private RedisUtil redisUtil;
 
     @Autowired
-    private RestTemplateService restTemplateService;
+    private UserControllerApi userControllerApi;
 
     @Override
     public GraceJSONResult listArticlesToUser(String keyword, Integer category, Integer page, Integer pageSize) {
@@ -77,7 +75,7 @@ public class PortalController extends BaseController implements PortalController
         }
 
         //2:发起rest请求获取作者基本信息列表
-        List<UserBaseInfoVO> list = restTemplateService.getUserBaseInfoListByIds(writerIdSet);
+        List<UserBaseInfoVO> list = getUserBaseInfoListByIds(writerIdSet);
         Page<ShowArticleVO> articleVoPage=new Page<>();
         BeanUtils.copyProperties(pageInfo,articleVoPage,"records");
 
@@ -150,14 +148,32 @@ public class PortalController extends BaseController implements PortalController
             BeanUtils.copyProperties(article,articleDetailVO);
             Set<Long> set=new HashSet<>();
             set.add(article.getPublishUserId());
-            List<UserBaseInfoVO> userBaseInfoListByIds = restTemplateService.getUserBaseInfoListByIds(set);
-            articleDetailVO.setPublishUserName(userBaseInfoListByIds.get(0).getNickname());
-            articleDetailVO.setPublishUserId(userBaseInfoListByIds.get(0).getId());
-            articleDetailVO.setReadCounts(getCountsFromRedis(REDIS_ARTICLE_READ_COUNTS+":"+articleId));
-            articleDetailVO.setCommentCounts(getCountsFromRedis(REDIS_ARTICLE_COMMENT_COUNTS+":"+articleId));
+            List<UserBaseInfoVO> userBaseInfoListByIds = getUserBaseInfoListByIds(set);
+            if(userBaseInfoListByIds.size()>0){
+                UserBaseInfoVO userBaseInfoVO = userBaseInfoListByIds.get(0);
+                articleDetailVO.setPublishUserName(userBaseInfoVO.getNickname());
+                articleDetailVO.setPublishUserId(userBaseInfoVO.getId());
+                articleDetailVO.setReadCounts(getCountsFromRedis(REDIS_ARTICLE_READ_COUNTS+":"+articleId));
+                articleDetailVO.setCommentCounts(getCountsFromRedis(REDIS_ARTICLE_COMMENT_COUNTS+":"+articleId));
+            }
             return GraceJSONResult.ok(articleDetailVO);
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_NOT_EXIST_ERROR);
+    }
+
+    public List<UserBaseInfoVO> getUserBaseInfoListByIds(Set<Long> set){
+
+        GraceJSONResult result = userControllerApi.queryBaseInfoByIds(JsonUtils.objectToJson(set));
+        /*ServiceInstance serviceInstance = discoveryClient.getInstances("SERVICE-USER").get(0);
+        String url="http://"+serviceInstance.getHost()+":"+serviceInstance.getPort()+"/user/queryBaseInfoByIds?userIds="+ JsonUtils.objectToJson(set);
+        ResponseEntity<GraceJSONResult> entity = restTemplate.getForEntity(url, GraceJSONResult.class);
+        GraceJSONResult result = entity.getBody();*/
+        List<UserBaseInfoVO> list=new ArrayList<>();
+        if(result.getStatus()==200){
+            String json = JsonUtils.objectToJson(result.getData());
+            list=JsonUtils.jsonToList(json, UserBaseInfoVO.class);
+        }
+        return list;
     }
 
 
@@ -192,7 +208,7 @@ public class PortalController extends BaseController implements PortalController
         Set<Long> set=new HashSet<>();
         set.add(writerId);
 
-        List<UserBaseInfoVO> list = restTemplateService.getUserBaseInfoListByIds(set);
+        List<UserBaseInfoVO> list = getUserBaseInfoListByIds(set);
         List<ShowArticleVO> records = pageInfo.getRecords().stream().map(((item -> {
             ShowArticleVO showArticleVo = new ShowArticleVO();
             BeanUtils.copyProperties(item,showArticleVo);

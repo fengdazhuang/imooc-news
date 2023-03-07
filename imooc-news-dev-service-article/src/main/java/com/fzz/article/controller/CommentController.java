@@ -44,11 +44,7 @@ public class CommentController extends BaseController implements CommentControll
     }
 
     @Override
-    public GraceJSONResult createComment(AddCommentBO addCommentBO, BindingResult result) {
-        if(result.hasErrors()){
-            Map<String, String> errors = getErrors(result);
-            return GraceJSONResult.errorMap(errors);
-        }
+    public GraceJSONResult createComment(AddCommentBO addCommentBO) {
         boolean res=commentService.createComment(addCommentBO);
         if(res){
             redisUtil.increment(REDIS_ARTICLE_COMMENT_COUNTS+":"+addCommentBO.getArticleId(),1);

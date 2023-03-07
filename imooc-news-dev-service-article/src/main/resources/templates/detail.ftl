@@ -406,12 +406,12 @@
 
                 if (res.data.status == 200) {
                     var grid = res.data.data;
-                    var commentList = grid.rows;
+                    var commentList = grid.records;
                     me.commentList = commentList;
 
                     me.page = grid.page;  // 当前页数累加1，用于后续页面滚动分页
-                    var maxPage = grid.total; // 获得总页数
-                    var total = grid.records; // 获得总记录数
+                    var maxPage = grid.pages; // 获得总页数
+                    var total = grid.total; // 获得总记录数
 
                     this.maxPage = maxPage;
                     this.total = total;
@@ -451,6 +451,7 @@
                     commentUserId: uid,
                     content: articleContent
                 };
+                console.log(commentReplyBO);
 
                 var articleServerUrl = app.articleServerUrl;
                 axios.defaults.withCredentials = true;

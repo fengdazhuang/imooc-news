@@ -5,9 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fzz.api.BaseController;
 import com.fzz.api.config.RabbitmqConfig;
-import com.fzz.api.config.RabbitmqDelayConfig;
 import com.fzz.api.controller.article.ArticleControllerApi;
-import com.fzz.article.MyCallbackConfig;
 import com.fzz.article.service.ArticleService;
 import com.fzz.bo.AddArticleBO;
 import com.fzz.common.enums.ArticleStatusEnum;
@@ -22,15 +20,9 @@ import com.fzz.vo.ArticleDetailVO;
 import com.mongodb.client.gridfs.GridFSBucket;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import io.swagger.models.auth.In;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.bson.types.ObjectId;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageDeliveryMode;
-import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -90,11 +82,8 @@ public class ArticleController extends BaseController implements ArticleControll
     }
 
     @Override
-    public GraceJSONResult createArticle(AddArticleBO addArticleBo, BindingResult result) {
-        if(result.hasErrors()){
-            Map<String, String> errors = getErrors(result);
-            return GraceJSONResult.errorMap(errors);
-        }
+    public GraceJSONResult createArticle(AddArticleBO addArticleBo) {
+
         if(addArticleBo.getArticleType()==1&&StringUtils.isBlank(addArticleBo.getArticleCover())) {
             return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_COVER_NOT_EXIST_ERROR);
         }else if(addArticleBo.getArticleType()==2){

@@ -13,8 +13,6 @@ import java.util.Date;
 @Component
 public class ArticlePublishDelayConsumer {
 
-    @Autowired
-    private ArticlePublishDelayComponent articlePublishDelayComponent;
 
     @Autowired
     private ArticleService articleService;

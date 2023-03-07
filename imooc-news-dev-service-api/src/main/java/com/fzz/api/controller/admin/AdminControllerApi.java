@@ -18,7 +18,6 @@ public interface AdminControllerApi {
     //adminMng/adminLogin
     @PostMapping("/adminLogin")
     public GraceJSONResult adminLogin(@RequestBody @Valid AdminUserLoginBO adminUserLoginBo,
-                                      BindingResult bindingResult,
                                       HttpServletRequest request,
                                       HttpServletResponse response);
 
