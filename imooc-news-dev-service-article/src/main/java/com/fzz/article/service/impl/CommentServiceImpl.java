@@ -14,8 +14,12 @@ import com.fzz.pojo.Comments;
 import com.fzz.vo.UserBaseInfoVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -25,8 +29,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comments> imp
     @Autowired
     private ArticleService articleService;
 
+    /*@Autowired
+    private UserControllerApi userControllerApi;*/
+
     @Autowired
-    private UserControllerApi userControllerApi;
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
 
 
@@ -69,7 +79,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comments> imp
 
     public List<UserBaseInfoVO> getUserBaseInfoListByIds(Set<Long> set){
 
-        GraceJSONResult result = userControllerApi.queryBaseInfoByIds(JsonUtils.objectToJson(set));
+//        GraceJSONResult result = userControllerApi.queryBaseInfoByIds(JsonUtils.objectToJson(set));
+//        ServiceInstance serviceInstance = discoveryClient.getInstances("SERVICE-USER").get(0);
+//        String url="http://"+serviceInstance.getHost()+":"+serviceInstance.getPort()+"/user/queryBaseInfoByIds?userIds="+ JsonUtils.objectToJson(set);
+        String url="http://localhost:8003/user/queryBaseInfoByIds?userIds="+ JsonUtils.objectToJson(set);
+        ResponseEntity<GraceJSONResult> entity = restTemplate.getForEntity(url, GraceJSONResult.class);
+        GraceJSONResult result = entity.getBody();
         List<UserBaseInfoVO> list=new ArrayList<>();
         if(result.getStatus()==200){
             String json = JsonUtils.objectToJson(result.getData());

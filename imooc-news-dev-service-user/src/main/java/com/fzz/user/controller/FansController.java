@@ -75,7 +75,8 @@ public class FansController extends BaseController implements FansControllerApi 
         if(writerId==null||fanId==null){
             return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
         }
-        boolean res=fansService.isMeFollowThisWriter(writerId,fanId);
+        boolean res=fansService.isMeFollowThisWriterEs(writerId,fanId);
+
         return GraceJSONResult.ok(res);
     }
 

@@ -20,7 +20,11 @@ import com.fzz.vo.UserBaseInfoVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -39,87 +43,26 @@ public class PortalController extends BaseController implements PortalController
     @Autowired
     private RedisUtil redisUtil;
 
+//    @Autowired
+//    private UserControllerApi userControllerApi;
+
     @Autowired
-    private UserControllerApi userControllerApi;
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
 
     @Override
-    public GraceJSONResult listArticlesToUser(String keyword, Integer category, Integer page, Integer pageSize) {
-        if(page==null){
-            page=COMMON_START_PAGE;
-        }
-        if(pageSize==null){
-            pageSize=COMMON_PAGE_SIZE;
-        }
-        Page<Article> pageInfo=new Page<>(page,pageSize);
-        LambdaQueryWrapper<Article> queryWrapper=new LambdaQueryWrapper<>();
-        queryWrapper.eq(Article::getIsAppoint,0);
-        String str = redisUtil.get(REDIS_ALL_CATEGORY);
-        List<Category> categoryList = JsonUtils.jsonToList(str, Category.class);
-        for(Category c:categoryList){
-            if(c.getId()==category){
-                queryWrapper.eq(Article::getCategoryId,category);
-            }
-        }
-        queryWrapper.eq(Article::getArticleStatus, ArticleStatusEnum.PUBLISH.type());
-        queryWrapper.orderByDesc(Article::getPublishTime);
-        articleService.page(pageInfo,queryWrapper);
-
-        List<Article> articleList = pageInfo.getRecords();
-
-        //1:获得文章的作者id列表
-        Set<Long> writerIdSet=new HashSet<>();
-        List<String> keys=new ArrayList<>();
-        for(Article article:articleList){
-            keys.add(REDIS_ARTICLE_READ_COUNTS+":"+article.getId());
-            writerIdSet.add(article.getPublishUserId());
-        }
-
-        //2:发起rest请求获取作者基本信息列表
-        List<UserBaseInfoVO> list = getUserBaseInfoListByIds(writerIdSet);
-        Page<ShowArticleVO> articleVoPage=new Page<>();
-        BeanUtils.copyProperties(pageInfo,articleVoPage,"records");
-
-        //3:获取文章VO展示对象的列表
-        if(list ==null||list.size()==0){
-            return GraceJSONResult.errorCustom(ResponseStatusEnum.SYSTEM_OPERATION_ERROR);
-        }
-        List<String> readCountsList = redisUtil.mget(keys);
-
-        AtomicInteger i= new AtomicInteger();
-        List<ShowArticleVO> records = articleList.stream().map(((item -> {
-            ShowArticleVO showArticleVo = new ShowArticleVO();
-            BeanUtils.copyProperties(item,showArticleVo);
-            UserBaseInfoVO userBaseInfoVO = getUserIfPublisher(showArticleVo.getPublishUserId(), list);
-            showArticleVo.setPublisherVO(userBaseInfoVO);
-            String value = readCountsList.get(i.getAndIncrement());
-            int m=0;
-            if(StringUtils.isNotBlank(value)){
-                m=Integer.parseInt(value);
-            }
-            showArticleVo.setReadCounts(m);
-            return showArticleVo;
-        }))).collect(Collectors.toList());
-
-
-        articleVoPage.setRecords(records);
-        return GraceJSONResult.ok(articleVoPage);
+    public GraceJSONResult listArticlesToUser(
+                                String keyword,
+                                Integer category,
+                                Integer page,
+                                Integer pageSize) {
+        return articleService.getArticlesToUser(keyword, category, page, pageSize);
     }
 
 
-    /**
-     * 根据发布者id在用户基本信息列表中查询
-     * @param publisherUserId  发布者id
-     * @param userBaseInfoVOList  用户基本信息列表
-     * @return 用户基本信息
-     */
-    private UserBaseInfoVO getUserIfPublisher(Long publisherUserId,List<UserBaseInfoVO> userBaseInfoVOList){
-        for(UserBaseInfoVO userBaseInfoVO:userBaseInfoVOList){
-            if(userBaseInfoVO.getId().equals(publisherUserId)){
-                return userBaseInfoVO;
-            }
-        }
-        return null;
-    }
+
 
 
 
@@ -163,11 +106,12 @@ public class PortalController extends BaseController implements PortalController
 
     public List<UserBaseInfoVO> getUserBaseInfoListByIds(Set<Long> set){
 
-        GraceJSONResult result = userControllerApi.queryBaseInfoByIds(JsonUtils.objectToJson(set));
-        /*ServiceInstance serviceInstance = discoveryClient.getInstances("SERVICE-USER").get(0);
-        String url="http://"+serviceInstance.getHost()+":"+serviceInstance.getPort()+"/user/queryBaseInfoByIds?userIds="+ JsonUtils.objectToJson(set);
+//        GraceJSONResult result = userControllerApi.queryBaseInfoByIds(JsonUtils.objectToJson(set));
+//        ServiceInstance serviceInstance = discoveryClient.getInstances("SERVICE-USER").get(0);
+//        String url="http://"+serviceInstance.getHost()+":"+serviceInstance.getPort()+"/user/queryBaseInfoByIds?userIds="+ JsonUtils.objectToJson(set);
+        String url="http://localhost:8003/user/queryBaseInfoByIds?userIds="+ JsonUtils.objectToJson(set);
         ResponseEntity<GraceJSONResult> entity = restTemplate.getForEntity(url, GraceJSONResult.class);
-        GraceJSONResult result = entity.getBody();*/
+        GraceJSONResult result = entity.getBody();
         List<UserBaseInfoVO> list=new ArrayList<>();
         if(result.getStatus()==200){
             String json = JsonUtils.objectToJson(result.getData());

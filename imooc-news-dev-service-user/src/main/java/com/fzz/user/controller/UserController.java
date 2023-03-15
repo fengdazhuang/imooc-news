@@ -61,7 +61,7 @@ public class UserController extends BaseController implements UserControllerApi 
     }
 
     @Override
-    @HystrixCommand(fallbackMethod = "queryBaseInfoByIdsFallback")
+//    @HystrixCommand(fallbackMethod = "queryBaseInfoByIdsFallback")
     public GraceJSONResult queryBaseInfoByIds(String userIds) {
         List<UserBaseInfoVO> userBaseInfoVOList=new ArrayList<>();
         List<Long> idList = JsonUtils.jsonToList(userIds, Long.class);
@@ -74,7 +74,7 @@ public class UserController extends BaseController implements UserControllerApi 
         return GraceJSONResult.ok(userBaseInfoVOList);
     }
 
-    public GraceJSONResult queryBaseInfoByIdsFallback(String userIds) {
+    /*public GraceJSONResult queryBaseInfoByIdsFallback(String userIds) {
         System.out.println("进入熔断降级方法");
         List<UserBaseInfoVO> userBaseInfoVOList=new ArrayList<>();
         List<Long> idList = JsonUtils.jsonToList(userIds, Long.class);
@@ -83,7 +83,7 @@ public class UserController extends BaseController implements UserControllerApi 
             userBaseInfoVOList.add(user);
         }
         return GraceJSONResult.ok(userBaseInfoVOList);
-    }
+    }*/
 
 
 

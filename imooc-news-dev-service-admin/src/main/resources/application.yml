@@ -1,6 +1,6 @@
 spring:
   application:
-    name: service-user
+    name: service-admin
   profiles:
     active: dev
   datasource:
@@ -32,3 +32,17 @@ mybatis-plus:
     db-config:
       # 主键生成策略
       id-type: ASSIGN_ID
+
+
+eureka:
+  server:
+    hostname: eureka
+    port: 7000
+  client:
+    register-with-eureka: true
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.server.hostname}:${eureka.server.port}/eureka/
+  instance:
+    lease-renewal-interval-in-seconds: 5000
+    lease-expiration-duration-in-seconds: 5000

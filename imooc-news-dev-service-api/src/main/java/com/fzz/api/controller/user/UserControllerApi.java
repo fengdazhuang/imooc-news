@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @Api(value = "用户个人管理",tags = "用户个人管理")
 @RequestMapping("/user")
-@FeignClient(value = "SERVICE-USER",fallbackFactory = UserControllerFallbackFactory.class)
+//@FeignClient(value = "SERVICE-USER",fallbackFactory = UserControllerFallbackFactory.class)
 public interface UserControllerApi {
 
     @ApiOperation(value = "获取用户个人详细信息",notes = "获取用户详细信息")

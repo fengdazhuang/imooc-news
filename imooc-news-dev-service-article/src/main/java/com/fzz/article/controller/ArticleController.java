@@ -14,6 +14,7 @@ import com.fzz.common.result.GraceJSONResult;
 import com.fzz.common.enums.ResponseStatusEnum;
 import com.fzz.common.utils.JsonUtils;
 import com.fzz.common.utils.RedisUtil;
+import com.fzz.eo.ArticleEO;
 import com.fzz.pojo.Article;
 import com.fzz.pojo.Category;
 import com.fzz.vo.ArticleDetailVO;
@@ -24,12 +25,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -54,6 +56,8 @@ public class ArticleController extends BaseController implements ArticleControll
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+
 
     @Value("${freemarker.html.targert}")
     private String articlePath;
@@ -145,18 +149,13 @@ public class ArticleController extends BaseController implements ArticleControll
     @Override
     public GraceJSONResult doReview(Long articleId, Integer passOrNot) {
         if(articleId!=null){
-            LambdaUpdateWrapper<Article> updateWrapper=new LambdaUpdateWrapper<>();
-            updateWrapper.eq(Article::getId,articleId);
-            updateWrapper.set(Article::getArticleStatus,
-                    passOrNot==ArticleStatusEnum.NOT_PASS.type()?ArticleStatusEnum.FAILD.type() : ArticleStatusEnum.PUBLISH.type());
-            boolean res = articleService.update(updateWrapper);
+            boolean res=articleService.doArticleReview(articleId,passOrNot);
             if(res){
                 if(passOrNot==ArticleStatusEnum.PASS.type()){
                     try {
                         String mongoFileId = createArticleHTMLToGridFS(articleId);
                         updateArticleWithMongodb(articleId,mongoFileId);
                         //doDownloadArticleHTML(articleId,mongoFileId);
-
                         doDownloadArticleHTMLByMQ(articleId,mongoFileId);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -168,6 +167,8 @@ public class ArticleController extends BaseController implements ArticleControll
         }
         return GraceJSONResult.errorCustom(ResponseStatusEnum.ARTICLE_REVIEW_ERROR);
     }
+
+
 
 
 

@@ -13,8 +13,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan("com.fzz")
 @EnableEurekaClient
 //@EnableFeignClients({"com.fzz"})
-@EnableHystrix
-@EnableCircuitBreaker
+//@EnableHystrix
+//@EnableCircuitBreaker
 public class UserApplication {
     public static void main(String[] args) {
         SpringApplication.run(UserApplication.class,args);

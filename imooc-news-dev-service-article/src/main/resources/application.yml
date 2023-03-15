@@ -25,6 +25,10 @@ spring:
     port: 5672
     username: admin
     password: 123
+  elasticsearch:
+    rest:
+      uris: http://43.142.253.194:9200
+
 
 
 
@@ -67,22 +71,22 @@ eureka:
     lease-renewal-interval-in-seconds: 5000
     lease-expiration-duration-in-seconds: 5000
 
-feign:
-  hystrix:
-    enabled: true
+#feign:
+#  hystrix:
+#    enabled: true
 
-hystrix:
-  command:
-    default:
-      excution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 2000  #hystrix超时时间，超过时间触发降级
-      circuitBreaker:
-        enabled: true
-        requestVolumeThreshold: 10        # 触发熔断最小请求次数
-        sleepWindowInMilliseconds: 10000     # 熔断后过几秒后尝试半开状态
-        errorThresholdPercentage: 50        #触发熔断的失败率
+#hystrix:
+#  command:
+#    default:
+#      excution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 2000  #hystrix超时时间，超过时间触发降级
+#      circuitBreaker:
+#        enabled: true
+#        requestVolumeThreshold: 10        # 触发熔断最小请求次数
+#        sleepWindowInMilliseconds: 10000     # 熔断后过几秒后尝试半开状态
+#        errorThresholdPercentage: 50        #触发熔断的失败率
 
 ribbon:
   ConnectTimeout: 5000          # 创建链接的超时时间

@@ -16,4 +16,6 @@ public interface FansService extends IService<Fans> {
     Integer queryFansCountBySex(Long writerId,Integer sex);
 
     List<QueryRegionVO> queryFansCountsByRegion(Long writerId);
+
+    boolean isMeFollowThisWriterEs(Long writerId, Long fanId);
 }

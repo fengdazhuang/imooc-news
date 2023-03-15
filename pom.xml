@@ -16,6 +16,7 @@
         <module>springcloud-eureka</module>
         <module>springcloud-zuul-server</module>
         <module>springcloud-config</module>
+        <module>imooc-news-dev-service-search</module>
     </modules>
 
     <!--  统一springboot的版本，后续springboot系列不要加版本号
